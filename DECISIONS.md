@@ -20,8 +20,8 @@ F1 inicia por triagem dirigida e cruza evidência estática, baseline e runtime;
 ## D-006 — Operação remote-first
 O GitHub remoto é a fotografia técnica oficial. Ambiente local é somente ferramenta auxiliar temporária e nunca substitui branch, commit/SHA, arquivos ou estado remoto. Um bloco não recebe `PASS` se a mudança relevante não estiver refletida no GitHub e o Notion não estiver sincronizado.
 
-## D-007 — Poucas branches remotas
-Máximo normal de 3 branches remotas ativas: `main`, uma `work/*` e, quando necessário, uma `lab/*`. Não existe `develop` por padrão. Não criar branch por microcorreção ou tentativa. Nomes: `work/f<fase>-<objetivo-curto>` e `lab/f<fase>-<pergunta-curta>`.
+## D-007 — Política antiga de até 3 branches — SUBSTITUÍDA
+A regra anterior que permitia `main + work/* + lab/*` como estrutura normal foi substituída pela D-011. Ela permanece registrada apenas como histórico.
 
 ## D-008 — GitHub Actions em linguagem humana
 O nome visível de workflow e o artefato entregue ao proprietário devem dizer o resultado esperado. Evitar `CI`, `Build`, `APK Build`, `Release` e equivalentes como nomes principais. Quando houver build Android, usar nome como `📱 GERAR APK PARA INSTALAR` e artefato autoexplicativo como `INSTALAR-ESTE-APK_<versao-ou-fase>_<sha-curto>.apk`.
@@ -31,3 +31,8 @@ O texto canônico das skills próprias vive no GitHub em `skills/<nome>/SKILL.md
 
 ## D-010 — Learning Distiller e promoção controlada
 Blocos materiais destilam experiência operacional em fatos, aprendizados, candidatos a skill e hipóteses. Não preservar transcript como aprendizado. Um método só vira/refina skill quando não duplica outra, tem procedimento/saída/limites claros e cumpre o gate de repetição, prevenção de falha material ou procedimento especializado determinístico definido em `docs/LEARNING_SYSTEM.md`.
+
+## D-011 — Main única durante a fase de descoberta
+Enquanto o projeto estiver na fase de descoberta/investigação, `main` é a única linha técnica ativa e o único destino oficial para conhecimento, evidência, documentação, decisões e aprendizados. Nenhuma branch nova pode ser criada ou usada para trabalho sem autorização clara e explícita do proprietário.
+
+Se houver trabalho paralelo ou outra escrita em andamento, o trabalho posterior **aguarda ou para** e revalida a `main` antes de continuar; não cria `work/*`, `lab/*` ou qualquer outra branch como solução para concorrência. Branches só voltam a ser uma opção mediante autorização explícita do proprietário para um objetivo concreto.
