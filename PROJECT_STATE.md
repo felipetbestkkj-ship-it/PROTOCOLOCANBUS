@@ -3,19 +3,39 @@
 **Projeto:** PROTOCOLOCANBUS  
 **Repositório:** `felipetbestkkj-ship-it/PROTOCOLOCANBUS`  
 **Visibilidade:** pública por decisão explícita do proprietário  
-**Fase:** F0 — Fundação limpa  
-**Estado:** PARTIAL até a fundação ser publicada neste repositório  
+**Fundação F0:** PASS — publicada e verificável  
+**Fase atual:** F1 — pronta para iniciar  
 **Última atualização:** 2026-08-06
 
 ## Missão atual
 
-Fundar um projeto autossuficiente, sem herança técnica de repositórios anteriores, e preparar a investigação dirigida da cadeia Car Info/HVAC.
+Investigar de forma dirigida a cadeia Car Info/HVAC a partir das evidências locais, mantendo o projeto autossuficiente e sem herança técnica de repositórios anteriores.
+
+## Fundação concluída
+
+A F0 estabeleceu no próprio repositório:
+
+- `README.md` como porta de entrada técnica;
+- `AGENTS.md` como contrato operacional;
+- `PROJECT_STATE.md` como fotografia técnica mutável;
+- `ROADMAP.md` como sequência de fases e gates;
+- `EVIDENCE_INDEX.md` como inventário inicial com SHA-256;
+- `DECISIONS.md` como decisões vigentes;
+- `LEARNINGS.md` como aprendizado fechado;
+- `scripts/check_governance.py` como verificador mínimo;
+- `.github/workflows/governance.yml` como checagem automática.
+
+O Notion permanece como norte operacional, memória, blocos, decisões detalhadas, aprendizados e handoff. Codex Engineering Guardrails permanece como método obrigatório de engenharia.
 
 ## Próximo bloco
 
 **F1 — Triagem orientada e mapa do Car Info/HVAC.**
 
 Objetivo: identificar original/candidato, versões, manifesto, componentes HVAC, privilégios e dependências observadas, cruzando análise estática com baseline e runtime.
+
+### Gate de saída de F1
+
+Entregar um mapa verificável de componentes e dependências relevantes, com perguntas prioritárias e lacunas explícitas, sem desmontagem indiscriminada e sem atuação no alvo real.
 
 ## Invariantes
 
@@ -39,10 +59,11 @@ As fontes anexadas sustentam como ponto de partida:
 - logs com componentes Jancar/CarInfo e identificador Hiworld `H1H2PAF23A-240409`;
 - controle HVAC completo ainda não tratado como provado.
 
-## Não fazer nesta fase
+## Não fazer sem evidência ou fronteira autorizada
 
 - não importar código/governança de outro repo;
 - não escolher arquitetura final de UI antes do mapa F1–F4;
 - não transmitir CAN por hipótese;
 - não mexer em ROM/firmware;
-- não declarar assinatura/instalação compatível sem prova.
+- não declarar assinatura/instalação compatível sem prova;
+- não instalar ou modificar o equipamento real fora de bloco que inclua explicitamente essa fronteira.
