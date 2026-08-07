@@ -51,3 +51,12 @@ Aprendizados fechados e pendentes. O banco completo fica no Notion.
 **Prevenção:** em ambiente com possíveis escritores concorrentes, consultar novamente o banco imediatamente antes de criar aprendizado numerado; se houver colisão, preservar um canônico e marcar o duplicado como descartado.  
 **Regra:** antes de criar `L-NNN`: fresh-read dos IDs → escolher próximo livre → criar → reconsultar e verificar unicidade.  
 **Promoção:** candidato a `skills/reusable-engineering-learning/SKILL.md`.
+
+## L-007 — Protocolo CANBOX serial não é CAN bruto do veículo
+
+**Estado:** Fechado  
+**Observação:** os `candata_*` foram tratados informalmente como logs da rede CAN, mas a F3 provou que o framing `5A A5` pertence ao enlace serial Android/Car Info ↔ CANBOX Hiworld; a CAN veicular fica abaixo da CANBOX.  
+**Causa:** a camada e o transporte não estavam rotulados antes da interpretação dos IDs, permitindo confundir command IDs do gateway com arbitration IDs CAN do Peugeot.  
+**Prevenção:** em toda captura, identificar primeiro framing, direção, transporte e camada; só depois atribuir semântica ao ID.  
+**Regra:** para este equipamento, `candata = protocolo Hiworld serial em /dev/ttyS5 @ 38400`; `0x31`, `0x3B`, `0x6A` e `0xFF` são IDs/comandos da CANBOX, não CAN IDs veiculares comprovados.  
+**Promoção:** candidato a refinamento de `skills/can-frame-differential-analysis/SKILL.md`.
