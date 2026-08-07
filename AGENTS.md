@@ -10,32 +10,45 @@ Materiais anexados pelo proprietário são evidências locais e podem ser analis
 
 Toda operação técnica usa, obrigatoriamente:
 
-1. **Codex Engineering Guardrails** no modo aplicável;
-2. **GitHub** para confirmar repositório, branch, commit, arquivos, diffs, CI e estado técnico;
-3. **Notion** para missão, fase, bloco ativo, decisões, aprendizados e handoff.
+1. **Notion** como norte operacional para missão, fase, bloco ativo, decisões, aprendizados e handoff;
+2. **Codex Engineering Guardrails** no modo aplicável para método, escopo, risco, evidência e fechamento;
+3. **GitHub Connector** como fonte técnica remota para confirmar repositório, branches, commits, arquivos, diffs, CI e estado real.
 
 Use `code-verification` para análise, diagnóstico, revisão e teste sem mudança de produção. Use `code-work` para criação ou alteração de código, scripts, testes, documentação operacional ou governança.
 
-Memória do chat não substitui fonte.
+Memória do chat e estado local não substituem fonte oficial.
 
 ## 3. Preflight obrigatório — gate de entrada
 
 **Nenhum bloco técnico pode começar sem este preflight.** Antes da primeira ação técnica do bloco, o agente deve:
 
-1. ler no Notion a Central Oficial, o Estado Oficial e o bloco ativo;
+1. ler no Notion a Central Oficial, o Estado Oficial e o bloco ativo/planejado;
 2. carregar **Codex Engineering Guardrails** no modo aplicável;
-3. confirmar no GitHub o repositório `felipetbestkkj-ship-it/PROTOCOLOCANBUS`, a branch e o commit realmente afetados;
-4. ler `AGENTS.md`, `PROJECT_STATE.md` e o trecho aplicável de `ROADMAP.md`;
+3. confirmar pelo **GitHub Connector** o repositório `felipetbestkkj-ship-it/PROTOCOLOCANBUS`, as branches remotas existentes, a branch afetada e o commit real;
+4. ler `AGENTS.md`, `PROJECT_STATE.md`, `REMOTE_OPERATION_POLICY.md`, `WORKFLOWS.md` e o trecho aplicável de `ROADMAP.md`;
 5. consultar decisões/aprendizados relacionados quando existirem;
-6. registrar no bloco ativo do Notion o modo Guardrails usado (`code-verification` ou `code-work`);
+6. registrar no bloco ativo do Notion o modo Guardrails usado (`code-verification` ou `code-work`), branch/commit de entrada e marcar `Preflight` somente depois dessas leituras;
 7. definir objetivo observável, escopo e evidência necessária para encerrar;
 8. só então executar.
 
 A primeira atualização de progresso de um bloco técnico deve deixar visível, de forma curta: **modo Guardrails + branch/commit + objetivo do bloco**. Isso é comprovante operacional, não pedido de permissão.
 
-Se o Guardrails não puder ser carregado, o bloco técnico **não pode ser declarado iniciado nem concluído como PASS**. Registrar `BLOCKED` ou `INCONCLUSIVE` conforme o caso, sem substituir o Guardrails por memória ou método improvisado.
+Se Guardrails, Notion ou GitHub Connector não puderem ser usados para cumprir o preflight, o bloco técnico **não pode ser declarado iniciado nem concluído como PASS**. Registrar `BLOCKED` ou `INCONCLUSIVE` conforme o caso, sem substituir essas fontes por memória ou cópia local.
 
-## 4. Autonomia por bloco
+## 4. Operação remote-first
+
+O estado técnico oficial vive no GitHub remoto.
+
+- usar o GitHub Connector para leitura e escrita remota sempre que tecnicamente disponível;
+- confirmar SHA remoto antes de alterar e SHA remoto depois de alterar;
+- uma cópia local pode ser usada somente como ferramenta auxiliar temporária de análise/build/teste quando necessária;
+- nenhum resultado local é considerado oficial enquanto não estiver refletido no GitHub remoto e identificado por commit/SHA;
+- não tomar decisão de estado com base em clone local, pasta local ou memória do chat;
+- ao fechar o bloco, GitHub e Notion devem estar sincronizados sobre fase, resultado e próximo passo.
+
+A meta é que dois chats distintos, lendo Notion e o mesmo SHA remoto, reconstruam a mesma fotografia do projeto.
+
+## 5. Autonomia por bloco
 
 **Autorize objetivos; a engenharia decide os passos.**
 
@@ -54,7 +67,7 @@ Teste é responsabilidade da engenharia. Não perguntar ao proprietário se deve
 
 Atualização de progresso informa; não pede permissão.
 
-## 5. Fronteiras materiais
+## 6. Fronteiras materiais
 
 Uma nova autorização objetiva só é necessária quando a ação não estiver incluída no bloco e mudar materialmente:
 
@@ -69,13 +82,13 @@ Uma nova autorização objetiva só é necessária quando a ação não estiver 
 
 Perguntas técnicas resolvíveis por inspeção, teste seguro ou escolha reversível devem ser resolvidas pela engenharia.
 
-## 6. Repositório público
+## 7. Repositório público
 
 A visibilidade pública é intencional neste ciclo. Não criar bloqueios de confidencialidade para logs, scripts, documentação, evidências ou artefatos do projeto.
 
 Única exceção operacional: não versionar credenciais ativas, tokens ou chaves privadas que concedam acesso a contas/sistemas.
 
-## 7. Evidência
+## 8. Evidência
 
 - preservar evidência original;
 - registrar SHA-256 de artefatos materiais;
@@ -87,7 +100,7 @@ A visibilidade pública é intencional neste ciclo. Não criar bloqueios de conf
 
 Resultados de bloco usam: `PASS`, `PARTIAL`, `FAIL`, `INCONCLUSIVE`.
 
-## 8. Engenharia reversa dirigida
+## 9. Engenharia reversa dirigida
 
 Não desmontar tudo por disponibilidade. Abrir somente artefatos necessários para responder à pergunta do bloco.
 
@@ -97,17 +110,64 @@ Ordem padrão do primeiro ciclo:
 
 ROM/firmware são último recurso, não ponto de partida.
 
-## 9. Branches e integração
+## 10. Branches — limite e nomenclatura
 
-Evitar proliferação de branches.
+O projeto deve permanecer com poucas branches remotas.
 
-- `main` representa estado oficial consolidado.
-- F0 pode ser consolidada diretamente em `main` quando a fundação for o próprio objetivo autorizado.
-- Mudança técnica relevante usa uma branch de trabalho por bloco/fase, não uma branch por descoberta.
-- commit/push na branch de trabalho faz parte do bloco.
-- merge em `main` pode fazer parte do mesmo bloco quando estiver explicitamente previsto; caso contrário é uma única fronteira macro, nunca uma sequência de microautorizações.
+### Limite normal
 
-## 10. Aprendizado fechado
+Máximo de **3 branches remotas ativas ao mesmo tempo**:
+
+1. `main` — estado oficial consolidado;
+2. uma única `work/*` — trabalho técnico atual;
+3. uma única `lab/*` — investigação temporária somente quando houver necessidade real de isolamento.
+
+Não existe `develop` por padrão.
+
+### Nomes permitidos
+
+Branch de trabalho:
+
+`work/f<fase>-<objetivo-curto>`
+
+Exemplo: `work/f1-hvac-mapeamento`.
+
+Branch de laboratório:
+
+`lab/f<fase>-<pergunta-curta>`
+
+Exemplo: `lab/f1-comparar-apks`.
+
+### Regras
+
+- não criar branch por ajuste pequeno;
+- não criar nomes `v2`, `v3`, `final`, `final2`, `teste2`;
+- um bloco/fase reutiliza a mesma `work/*` enquanto o objetivo for o mesmo;
+- `lab/*` deve ser temporária;
+- antes de criar branch, consultar branches remotas pelo GitHub Connector;
+- se já houver 3 branches remotas, consolidar ou remover uma temporária antes de criar outra;
+- branch encerrada pode ser removida depois de confirmar que não contém commits únicos necessários.
+
+## 11. Workflows e artefatos em linguagem humana
+
+Os nomes visíveis no GitHub Actions devem dizer **o que o proprietário deve esperar**, não expor jargão interno.
+
+Exemplos oficiais:
+
+- `✅ VERIFICAR SE O PROJETO ESTÁ ORGANIZADO`;
+- `📱 GERAR APK PARA INSTALAR`;
+- `🧪 TESTAR APK SEM MEXER NO CARRO`;
+- `🚀 PREPARAR VERSÃO FINAL`.
+
+Evitar como nome principal: `CI`, `Build`, `APK Build`, `Release`, `Pipeline`.
+
+Quando existir geração de APK, o artefato principal entregue ao proprietário deve seguir formato autoexplicativo, preferencialmente:
+
+`INSTALAR-ESTE-APK_<versao-ou-fase>_<sha-curto>.apk`
+
+Detalhes e convenções ficam em `WORKFLOWS.md`.
+
+## 12. Aprendizado fechado
 
 Erro ou descoberta reutilizável segue:
 
@@ -115,7 +175,7 @@ Erro ou descoberta reutilizável segue:
 
 Sem causa provada, registrar como pendente. Não transformar hipótese em regra permanente.
 
-## 11. Comunicação
+## 13. Comunicação
 
 O proprietário é leigo em programação.
 
@@ -125,13 +185,14 @@ O proprietário é leigo em programação.
 - manter atualizações curtas e com evidência nova;
 - não repetir pedido já respondido.
 
-## 12. Fechamento obrigatório
+## 14. Fechamento obrigatório
 
 Todo bloco técnico termina com:
 
 - modo Guardrails efetivamente carregado;
+- Notion consultado e sincronizado?;
 - objetivo;
-- repo/branch/commit;
+- repo/branch/commit de entrada e saída;
 - resultado;
 - comprovado;
 - não comprovado;
@@ -141,4 +202,4 @@ Todo bloco técnico termina com:
 - aprendizado;
 - próximo passo único.
 
-Um bloco não pode receber `PASS` se não houver registro do modo Guardrails usado e fotografia de branch/commit do trabalho.
+Um bloco não pode receber `PASS` se não houver registro do modo Guardrails usado, preflight no Notion e fotografia remota de branch/commit.
