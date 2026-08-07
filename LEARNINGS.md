@@ -42,3 +42,12 @@ Aprendizados fechados e pendentes. O banco completo fica no Notion.
 **Prevenção:** rotular frames como `construído estaticamente`, `TX observado`, `RX observado` ou `correlacionado`.  
 **Regra:** para promover comando a comportamento comprovado, exigir `ação controlada → timestamp → TX → RX/estado`; ausência de TX permanece lacuna explícita.  
 **Promoção:** candidato a `skills/runtime-static-correlation/SKILL.md`.
+
+## L-006 — Reservar ID de aprendizado somente após leitura fresca
+
+**Estado:** Fechado  
+**Observação:** durante a reconciliação do banco Aprendizados, outro bloco/agente criou o `L-003` entre a leitura inicial e a escrita, produzindo temporariamente dois registros com o mesmo ID.  
+**Causa:** o próximo identificador foi escolhido a partir de uma fotografia que deixou de ser atual antes da criação do registro.  
+**Prevenção:** em ambiente com possíveis escritores concorrentes, consultar novamente o banco imediatamente antes de criar aprendizado numerado; se houver colisão, preservar um canônico e marcar o duplicado como descartado.  
+**Regra:** antes de criar `L-NNN`: fresh-read dos IDs → escolher próximo livre → criar → reconsultar e verificar unicidade.  
+**Promoção:** candidato a `skills/reusable-engineering-learning/SKILL.md`.
