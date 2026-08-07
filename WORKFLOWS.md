@@ -17,11 +17,19 @@ Evitar nomes isolados como:
 Preferir nomes como:
 
 - `✅ VERIFICAR SE O PROJETO ESTÁ ORGANIZADO` — confere governança e regras básicas;
+- `🧪 TESTAR HVAC SEM MEXER NO CARRO` — valida parser, gêmeo digital, contrato e regressões offline;
 - `📱 GERAR APK PARA INSTALAR` — quando existir build Android, gera um APK pronto para o proprietário baixar e instalar;
-- `🧪 TESTAR APK SEM MEXER NO CARRO` — quando houver laboratório/simulador, executa validações sem atuar no equipamento real;
+- `🧪 TESTAR APK SEM MEXER NO CARRO` — quando existir APK/laboratório integrado, executa validações sem atuar no equipamento real;
 - `🚀 PREPARAR VERSÃO FINAL` — somente quando existir uma etapa real de consolidação/release.
 
 Não criar workflow só para ocupar espaço. Um workflow novo só entra quando existir uma ação real e repetível que o projeto já saiba executar.
+
+### Workflows ativos agora
+
+- `✅ VERIFICAR SE O PROJETO ESTÁ ORGANIZADO` — governança básica;
+- `🧪 TESTAR HVAC SEM MEXER NO CARRO` — roda `analyze_hiword_candata.py --self-test`, `hiworld_hvac_digital_twin.py --self-test`, `validate_hvac_behavior_contract.py` e a suíte `unittest`.
+
+O segundo workflow existe porque o laboratório offline já é reproduzível. Ele **não representa F11 concluída** e não instala nem transmite nada no carro.
 
 ## 2. Nome do APK/artefato
 
