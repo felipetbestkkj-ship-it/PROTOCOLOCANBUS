@@ -45,6 +45,20 @@ Nunca entregar um arquivo chamado apenas `app-debug.apk` ou `build.apk` como art
 
 O projeto é curto e deve permanecer simples.
 
+### Princípio principal
+
+**O menor número de branches é o padrão. O limite de 3 é teto de segurança, não meta de ocupação.**
+
+Antes de criar uma branch nova, deve existir uma justificativa técnica concreta que possa ser registrada em uma frase. A mera existência de outro agente/bloco em andamento **não** justifica uma nova branch por si só.
+
+Preferir, nesta ordem:
+
+1. reutilizar a `work/*` atual quando o objetivo técnico for o mesmo;
+2. aguardar a consolidação quando a melhoria puder esperar sem risco;
+3. criar `lab/*` somente quando isolamento real for necessário para experimento, comparação ou risco técnico específico.
+
+Se não houver uma razão técnica clara para isolamento, não criar branch.
+
 ### Limite normal
 
 Máximo de **3 branches remotas ativas ao mesmo tempo**:
@@ -79,6 +93,7 @@ Exemplo:
 - não criar `v2`, `v3`, `final`, `final2`;
 - um bloco/fase reutiliza a mesma `work/*` enquanto o objetivo permanecer o mesmo;
 - `lab/*` só existe quando a investigação precisa de isolamento real;
+- “há outro agente trabalhando” não é justificativa suficiente para `lab/*`;
 - antes de criar nova branch, consultar as branches remotas existentes;
 - branch concluída/abandonada deve ser removida depois de confirmar que não contém trabalho único necessário;
 - se já existirem 3 branches remotas, uma nova só pode nascer depois de consolidar ou remover uma das temporárias.

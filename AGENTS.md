@@ -61,9 +61,11 @@ Quando um objetivo está autorizado, o agente executa sem microautorizações as
 - correções indispensáveis ao mesmo objetivo;
 - revisão do estado integrado;
 - documentação, estado, evidência e aprendizado;
+- seleção/aplicação de skills úteis ao objetivo;
+- refinamento de aprendizado/skill quando coberto pelo sistema de promoção;
 - commit/push na branch de trabalho do bloco quando tecnicamente disponível.
 
-Teste é responsabilidade da engenharia. Não perguntar ao proprietário se deve testar.
+Teste é responsabilidade da engenharia. Não perguntar ao proprietário se deve testar, qual ferramenta técnica previsível deve usar ou qual skill aplicável deve carregar.
 
 Atualização de progresso informa; não pede permissão.
 
@@ -175,7 +177,35 @@ Erro ou descoberta reutilizável segue:
 
 Sem causa provada, registrar como pendente. Não transformar hipótese em regra permanente.
 
-## 13. Comunicação
+## 13. Skills e aprendizado reutilizável
+
+O conteúdo técnico canônico das skills vive no GitHub. Consultar `SKILLS_INDEX.md` depois do preflight e antes de execução especializada.
+
+### Seleção
+
+- selecionar autonomamente apenas as skills relevantes ao objetivo; normalmente 1–3;
+- não carregar todas por padrão;
+- não pedir autorização para usar skill quando a ação já está dentro do bloco;
+- ausência/inaplicabilidade de skill **não bloqueia**: Guardrails + este contrato continuam suficientes;
+- skill nunca amplia autoridade nem reduz fronteira material.
+
+### Learning Distiller
+
+No fechamento de bloco material, usar `skills/reusable-engineering-learning/SKILL.md` para destilar:
+
+`execução -> resultado técnico + experiência operacional -> fato / aprendizado / candidato a skill / hipótese`
+
+Não armazenar transcript de execução como aprendizado. Muitas ações podem gerar poucos aprendizados e talvez nenhuma nova skill.
+
+### Promoção
+
+Método pode virar/refinar skill autonomamente quando não duplicar outra skill, tiver procedimento/saída/limites claros e cumprir o gate de `docs/LEARNING_SYSTEM.md`.
+
+Fato específico, estado mutável, hipótese ou conselho genérico não viram skill.
+
+Notion mantém catálogo/status/promoção; GitHub mantém o texto canônico. Não duplicar a skill integral na instrução personalizada ou Notion.
+
+## 14. Comunicação
 
 O proprietário é leigo em programação.
 
@@ -185,7 +215,7 @@ O proprietário é leigo em programação.
 - manter atualizações curtas e com evidência nova;
 - não repetir pedido já respondido.
 
-## 14. Fechamento obrigatório
+## 15. Fechamento obrigatório
 
 Todo bloco técnico termina com:
 
@@ -198,8 +228,8 @@ Todo bloco técnico termina com:
 - não comprovado;
 - arquivos/artefatos;
 - evidência/testes;
+- aprendizado destilado (quando houver) e eventual skill refinada/promovida;
 - sistemas externos/alvo real alterados?;
-- aprendizado;
 - próximo passo único.
 
 Um bloco não pode receber `PASS` se não houver registro do modo Guardrails usado, preflight no Notion e fotografia remota de branch/commit.
