@@ -1,0 +1,34 @@
+name: 🧪 TESTAR HVAC SEM MEXER NO CARRO
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-hvac-lab:
+    name: 🧪 Validar protocolo, contrato e gêmeo digital
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar projeto
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Testar analisador Hiworld
+        run: python scripts/analyze_hiword_candata.py --self-test
+
+      - name: Testar gêmeo digital HVAC
+        run: python scripts/hiworld_hvac_digital_twin.py --self-test
+
+      - name: Validar contrato HVAC
+        run: python scripts/validate_hvac_behavior_contract.py
+
+      - name: Rodar regressões offline
+        run: python -m unittest discover -s tests -v
