@@ -28,9 +28,24 @@ Transformar experiência de execução em conhecimento reutilizável sem armazen
    - `HIPOTESE`.
 4. Registre fatos na evidência/estado apropriados.
 5. Para aprendizado operacional, registre `observação → causa (se provada) → prevenção → teste/regra`.
-6. Compare candidato com `SKILLS_INDEX.md` para evitar duplicação.
-7. Promova autonomamente somente quando cumprir o gate em `docs/LEARNING_SYSTEM.md`.
-8. Se ainda não cumprir, mantenha como candidato; não bloqueie o próximo bloco.
+6. **Aplique o gate anti-retrabalho ao conhecimento material:**
+   - detalhe reproduzível/versionado na linha GitHub autorizada;
+   - mapa humano no Notion com resumo no topo e detalhe suficiente para consulta sem redescoberta;
+   - para protocolo/binário, preservar framing, bytes/bits, IDs/subcomandos, exemplos, contagens, confiança, hipóteses descartadas e lacunas.
+7. Use o teste: um agente novo consegue responder `o que é → onde está → qual fonte prova → qual classificação de evidência → o que falta provar` sem repetir a análise original?
+8. Compare candidato com `SKILLS_INDEX.md` para evitar duplicação.
+9. Promova autonomamente somente quando cumprir o gate em `docs/LEARNING_SYSTEM.md`.
+10. Se ainda não cumprir, mantenha como candidato; não bloqueie o próximo bloco.
+
+## Registros numerados e concorrência
+
+Quando o projeto usa IDs sequenciais para aprendizados/decisões:
+
+1. faça **fresh-read imediatamente antes** de reservar o próximo ID;
+2. escolha o próximo ID livre;
+3. grave;
+4. reconsulte e confirme unicidade;
+5. se houver colisão concorrente, preserve um canônico e marque o duplicado como descartado — não apague silenciosamente a história.
 
 ## Gate de promoção resumido
 
@@ -50,6 +65,7 @@ Aprendizados úteis: ...
 Procedimentos reutilizáveis: ...
 Skills promovidas/refinadas: ...
 Hipóteses/lacunas: ...
+Mapa anti-retrabalho atualizado?: sim/não + onde
 ```
 
 Não invente contagens. Se 42 passos geraram 2 aprendizados, registre 2 aprendizados.
