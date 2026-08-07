@@ -8,7 +8,7 @@ Materiais anexados pelo proprietário são evidências locais e podem ser analis
 
 ## 2. Tríade obrigatória
 
-Toda operação técnica usa:
+Toda operação técnica usa, obrigatoriamente:
 
 1. **Codex Engineering Guardrails** no modo aplicável;
 2. **GitHub** para confirmar repositório, branch, commit, arquivos, diffs, CI e estado técnico;
@@ -18,19 +18,22 @@ Use `code-verification` para análise, diagnóstico, revisão e teste sem mudan�
 
 Memória do chat não substitui fonte.
 
-## 3. Ordem de entrada
+## 3. Preflight obrigatório — gate de entrada
 
-Antes de uma tarefa não trivial:
+**Nenhum bloco técnico pode começar sem este preflight.** Antes da primeira ação técnica do bloco, o agente deve:
 
-1. confirmar `felipetbestkkj-ship-it/PROTOCOLOCANBUS`;
-2. confirmar branch e commit afetados;
-3. ler este arquivo;
-4. ler `PROJECT_STATE.md` e o trecho aplicável de `ROADMAP.md`;
-5. ler decisões/aprendizados relacionados;
-6. consultar a Central Oficial e o bloco ativo no Notion;
-7. carregar o Guardrails aplicável;
-8. definir objetivo observável e evidência de saída;
-9. executar.
+1. ler no Notion a Central Oficial, o Estado Oficial e o bloco ativo;
+2. carregar **Codex Engineering Guardrails** no modo aplicável;
+3. confirmar no GitHub o repositório `felipetbestkkj-ship-it/PROTOCOLOCANBUS`, a branch e o commit realmente afetados;
+4. ler `AGENTS.md`, `PROJECT_STATE.md` e o trecho aplicável de `ROADMAP.md`;
+5. consultar decisões/aprendizados relacionados quando existirem;
+6. registrar no bloco ativo do Notion o modo Guardrails usado (`code-verification` ou `code-work`);
+7. definir objetivo observável, escopo e evidência necessária para encerrar;
+8. só então executar.
+
+A primeira atualização de progresso de um bloco técnico deve deixar visível, de forma curta: **modo Guardrails + branch/commit + objetivo do bloco**. Isso é comprovante operacional, não pedido de permissão.
+
+Se o Guardrails não puder ser carregado, o bloco técnico **não pode ser declarado iniciado nem concluído como PASS**. Registrar `BLOCKED` ou `INCONCLUSIVE` conforme o caso, sem substituir o Guardrails por memória ou método improvisado.
 
 ## 4. Autonomia por bloco
 
@@ -126,7 +129,7 @@ O proprietário é leigo em programação.
 
 Todo bloco técnico termina com:
 
-- modo Guardrails;
+- modo Guardrails efetivamente carregado;
 - objetivo;
 - repo/branch/commit;
 - resultado;
@@ -137,3 +140,5 @@ Todo bloco técnico termina com:
 - sistemas externos/alvo real alterados?;
 - aprendizado;
 - próximo passo único.
+
+Um bloco não pode receber `PASS` se não houver registro do modo Guardrails usado e fotografia de branch/commit do trabalho.
