@@ -21,7 +21,7 @@ F1 inicia por triagem dirigida e cruza evidência estática, baseline e runtime;
 O GitHub remoto é a fotografia técnica oficial. Ambiente local é somente ferramenta auxiliar temporária e nunca substitui branch, commit/SHA, arquivos ou estado remoto. Um bloco não recebe `PASS` se a mudança relevante não estiver refletida no GitHub e o Notion não estiver sincronizado.
 
 ## D-007 — Política antiga de até 3 branches — SUBSTITUÍDA
-A regra anterior que permitia `main + work/* + lab/*` como estrutura normal foi substituída pela D-011. Ela permanece registrada apenas como histórico.
+A regra anterior que permitia `main + work/* + lab/*` como estrutura normal foi substituída pela D-011 e refinada de forma permanente pela D-012. Ela permanece registrada apenas como histórico.
 
 ## D-008 — GitHub Actions em linguagem humana
 O nome visível de workflow e o artefato entregue ao proprietário devem dizer o resultado esperado. Evitar `CI`, `Build`, `APK Build`, `Release` e equivalentes como nomes principais. Quando houver build Android, usar nome como `📱 GERAR APK PARA INSTALAR` e artefato autoexplicativo como `INSTALAR-ESTE-APK_<versao-ou-fase>_<sha-curto>.apk`.
@@ -33,6 +33,15 @@ O texto canônico das skills próprias vive no GitHub em `skills/<nome>/SKILL.md
 Blocos materiais destilam experiência operacional em fatos, aprendizados, candidatos a skill e hipóteses. Não preservar transcript como aprendizado. Um método só vira/refina skill quando não duplica outra, tem procedimento/saída/limites claros e cumpre o gate de repetição, prevenção de falha material ou procedimento especializado determinístico definido em `docs/LEARNING_SYSTEM.md`.
 
 ## D-011 — Main única durante a fase de descoberta
-Enquanto o projeto estiver na fase de descoberta/investigação, `main` é a única linha técnica ativa e o único destino oficial para conhecimento, evidência, documentação, decisões e aprendizados. Nenhuma branch nova pode ser criada ou usada para trabalho sem autorização clara e explícita do proprietário.
+Enquanto o projeto estiver na fase de descoberta/investigação e não houver uma exceção de risco explicitamente autorizada, `main` é a única linha técnica ativa e o único destino oficial para conhecimento, evidência, documentação, decisões e aprendizados.
 
-Se houver trabalho paralelo ou outra escrita em andamento, o trabalho posterior **aguarda ou para** e revalida a `main` antes de continuar; não cria `work/*`, `lab/*` ou qualquer outra branch como solução para concorrência. Branches só voltam a ser uma opção mediante autorização explícita do proprietário para um objetivo concreto.
+Se houver trabalho paralelo ou outra escrita em andamento, o trabalho posterior **aguarda ou para** e revalida a `main` antes de continuar; não cria branch automaticamente como solução para concorrência.
+
+## D-012 — Branch somente por benefício de isolamento + autorização explícita
+`main` é o padrão permanente. Uma branch só deve ser recomendada quando a engenharia conseguir demonstrar um risco concreto que o isolamento reduz melhor do que `main + commits + testes + fresh-read + serialização`, como preservar executável conhecido como bom, isolar mudança potencialmente quebrável, comparar implementações independentes, permitir paralelismo de código não serializável de forma razoável ou separar hotfix/release.
+
+Documentação, evidência, aprendizado, início de fase, outro agente trabalhando, mudança pequena ou hábito de Git Flow não justificam branch por si só.
+
+**Mesmo quando o gate de risco indicar benefício, criar ou usar qualquer branch diferente de `main` continua exigindo autorização clara e explícita do proprietário para aquele objetivo.** Após essa autorização, a autonomia normal do bloco permanece: commits, testes, correções, documentação e demais operações reversíveis dentro da linha autorizada não exigem microautorizações. Merge/release/publicação permanecem fronteiras separadas, salvo se a autorização original as incluir.
+
+Sem autorização, somente `main`. Com autorização normal, o padrão é `main` + uma branch temporária; uma segunda branch simultânea exige justificativa própria e nova autorização. Política detalhada: `docs/BRANCH_POLICY.md`.
