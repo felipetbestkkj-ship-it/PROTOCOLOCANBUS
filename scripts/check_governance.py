@@ -10,6 +10,8 @@ required = [
     "EVIDENCE_INDEX.md",
     "DECISIONS.md",
     "LEARNINGS.md",
+    "REMOTE_OPERATION_POLICY.md",
+    "WORKFLOWS.md",
 ]
 
 missing = [name for name in required if not (ROOT / name).is_file()]
@@ -21,15 +23,30 @@ if missing:
 
 agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 state = (ROOT / "PROJECT_STATE.md").read_text(encoding="utf-8")
+remote = (ROOT / "REMOTE_OPERATION_POLICY.md").read_text(encoding="utf-8")
+workflows_doc = (ROOT / "WORKFLOWS.md").read_text(encoding="utf-8")
+workflow = (ROOT / ".github/workflows/governance.yml").read_text(encoding="utf-8")
 
 checks = {
     "repo oficial no AGENTS": "felipetbestkkj-ship-it/PROTOCOLOCANBUS" in agents,
     "autonomia por bloco": "Autonomia por bloco" in agents,
     "Guardrails obrigatório": "Codex Engineering Guardrails" in agents,
     "preflight obrigatório": "Preflight obrigatório" in agents,
-    "bloqueio sem Guardrails": "não pode ser declarado iniciado nem concluído como PASS" in agents,
+    "bloqueio sem tríade": "GitHub Connector não puderem ser usados" in agents,
     "registro de modo Guardrails": "modo Guardrails efetivamente carregado" in agents,
-    "Notion primeiro no preflight": "ler no Notion a Central Oficial, o Estado Oficial e o bloco ativo" in agents,
+    "Notion primeiro no preflight": "ler no Notion a Central Oficial, o Estado Oficial e o bloco ativo/planejado" in agents,
+    "GitHub Connector explícito": "GitHub Connector" in agents,
+    "remote-first explícito": "Operação remote-first" in agents,
+    "limite de três branches": "Máximo de **3 branches remotas ativas" in agents,
+    "branch work padronizada": "work/f<fase>-<objetivo-curto>" in agents,
+    "branch lab padronizada": "lab/f<fase>-<pergunta-curta>" in agents,
+    "sem develop por padrão": "Não existe `develop` por padrão" in agents,
+    "política remota presente": "estado remoto como fonte oficial" in remote,
+    "ordem Notion Guardrails GitHub": "Notion" in remote and "Codex Engineering Guardrails" in remote and "GitHub Connector" in remote,
+    "workflow humano documentado": "📱 GERAR APK PARA INSTALAR" in workflows_doc,
+    "apk autoexplicativo": "INSTALAR-ESTE-APK_" in workflows_doc,
+    "workflow governança autoexplicativo": "✅ VERIFICAR SE O PROJETO ESTÁ ORGANIZADO" in workflow,
+    "checagem remota de branches": "Branches remotas ativas" in workflow,
     "próximo bloco no estado": "Próximo bloco" in state,
 }
 
@@ -40,4 +57,4 @@ if failed:
         print(f"- {label}")
     sys.exit(1)
 
-print("PASS: fundação e gate Guardrails presentes e coerentes.")
+print("PASS: governança, Guardrails, operação remota, branches e workflows estão amarrados.")
