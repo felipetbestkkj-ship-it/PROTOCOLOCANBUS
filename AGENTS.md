@@ -27,9 +27,10 @@ Memória do chat e estado local não substituem fonte oficial.
 3. confirmar pelo **GitHub Connector** o repositório `felipetbestkkj-ship-it/PROTOCOLOCANBUS`, as branches remotas existentes, a `main` e o commit real;
 4. ler `AGENTS.md`, `PROJECT_STATE.md`, `REMOTE_OPERATION_POLICY.md`, `WORKFLOWS.md` e o trecho aplicável de `ROADMAP.md`;
 5. consultar decisões/aprendizados relacionados quando existirem;
-6. registrar no bloco ativo do Notion o modo Guardrails usado (`code-verification` ou `code-work`), `main`/commit de entrada e marcar `Preflight` somente depois dessas leituras;
-7. definir objetivo observável, escopo e evidência necessária para encerrar;
-8. só então executar.
+6. quando o tema já possuir mapa técnico consolidado no Notion, lê-lo **antes de reabrir fontes brutas**, para distinguir verificação/aprofundamento de redescoberta;
+7. registrar no bloco ativo do Notion o modo Guardrails usado (`code-verification` ou `code-work`), `main`/commit de entrada e marcar `Preflight` somente depois dessas leituras;
+8. definir objetivo observável, escopo e evidência necessária para encerrar;
+9. só então executar.
 
 A primeira atualização de progresso de um bloco técnico deve deixar visível, de forma curta: **modo Guardrails + main/commit + objetivo do bloco**. Isso é comprovante operacional, não pedido de permissão.
 
@@ -108,6 +109,8 @@ Resultados de bloco usam: `PASS`, `PARTIAL`, `FAIL`, `INCONCLUSIVE`.
 ## 9. Engenharia reversa dirigida
 
 Não desmontar tudo por disponibilidade. Abrir somente artefatos necessários para responder à pergunta do bloco.
+
+**Não reabrir fontes brutas apenas para redescobrir fato já consolidado.** Reabrir é correto para verificar uma conclusão, testar hipótese nova, resolver contradição ou aprofundar uma lacuna explícita.
 
 Ordem padrão do primeiro ciclo:
 
@@ -188,6 +191,28 @@ Erro ou descoberta reutilizável segue:
 
 Sem causa provada, registrar como pendente. Não transformar hipótese em regra permanente.
 
+### D-013 — documentação anti-retrabalho em duas camadas
+
+Toda descoberta técnica material deve sobreviver em **duas camadas complementares**:
+
+1. **Detalhe reproduzível e versionado no GitHub** — relatório, evidência, hashes, scripts/tabelas e informação necessária para verificar a conclusão.
+2. **Mapa humano no Notion** — resumo no topo e detalhe suficiente para que outro agente consulte sem repetir a engenharia reversa.
+
+Para protocolos, binários, frames ou estruturas semelhantes, o mapa deve preservar quando aplicável:
+
+- framing e transporte/camada;
+- byte/offset e bits;
+- IDs, subcomandos e valores;
+- exemplos reais ou estáticos claramente classificados;
+- contagens/variantes/latências relevantes;
+- fonte/evidência e nível de confiança;
+- hipóteses descartadas;
+- lacunas e próxima evidência discriminatória.
+
+O Estado Oficial e `PROJECT_STATE.md` continuam resumidos. Eles apontam para o mapa/relatório e não substituem o detalhe técnico.
+
+**Teste anti-retrabalho:** um novo agente deve conseguir responder `o que é → onde está → qual fonte prova → foi observado, construído ou correlacionado? → o que falta provar?` sem repetir a análise original.
+
 ## 13. Skills e aprendizado reutilizável
 
 O conteúdo técnico canônico das skills vive no GitHub. Consultar `SKILLS_INDEX.md` depois do preflight e antes de execução especializada.
@@ -240,6 +265,7 @@ Todo bloco técnico termina com:
 - arquivos/artefatos;
 - evidência/testes;
 - aprendizado destilado (quando houver) e eventual skill refinada/promovida;
+- mapa técnico anti-retrabalho atualizado quando houver descoberta material;
 - sistemas externos/alvo real alterados?;
 - próximo passo único.
 
