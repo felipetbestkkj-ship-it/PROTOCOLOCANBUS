@@ -12,7 +12,7 @@ Toda operação técnica usa, obrigatoriamente:
 
 1. **Notion** como norte operacional para missão, fase, bloco ativo, decisões, aprendizados e handoff;
 2. **Codex Engineering Guardrails** no modo aplicável para método, escopo, risco, evidência e fechamento;
-3. **GitHub Connector** como fonte técnica remota para confirmar repositório, branches, commits, arquivos, diffs, CI e estado real.
+3. **GitHub Connector** como fonte técnica remota para confirmar repositório, branches existentes, `main`, commits, arquivos, diffs, CI e estado real.
 
 Use `code-verification` para análise, diagnóstico, revisão e teste sem mudança de produção. Use `code-work` para criação ou alteração de código, scripts, testes, documentação operacional ou governança.
 
@@ -24,14 +24,14 @@ Memória do chat e estado local não substituem fonte oficial.
 
 1. ler no Notion a Central Oficial, o Estado Oficial e o bloco ativo/planejado;
 2. carregar **Codex Engineering Guardrails** no modo aplicável;
-3. confirmar pelo **GitHub Connector** o repositório `felipetbestkkj-ship-it/PROTOCOLOCANBUS`, as branches remotas existentes, a branch afetada e o commit real;
+3. confirmar pelo **GitHub Connector** o repositório `felipetbestkkj-ship-it/PROTOCOLOCANBUS`, as branches remotas existentes, a `main` e o commit real;
 4. ler `AGENTS.md`, `PROJECT_STATE.md`, `REMOTE_OPERATION_POLICY.md`, `WORKFLOWS.md` e o trecho aplicável de `ROADMAP.md`;
 5. consultar decisões/aprendizados relacionados quando existirem;
-6. registrar no bloco ativo do Notion o modo Guardrails usado (`code-verification` ou `code-work`), branch/commit de entrada e marcar `Preflight` somente depois dessas leituras;
+6. registrar no bloco ativo do Notion o modo Guardrails usado (`code-verification` ou `code-work`), `main`/commit de entrada e marcar `Preflight` somente depois dessas leituras;
 7. definir objetivo observável, escopo e evidência necessária para encerrar;
 8. só então executar.
 
-A primeira atualização de progresso de um bloco técnico deve deixar visível, de forma curta: **modo Guardrails + branch/commit + objetivo do bloco**. Isso é comprovante operacional, não pedido de permissão.
+A primeira atualização de progresso de um bloco técnico deve deixar visível, de forma curta: **modo Guardrails + main/commit + objetivo do bloco**. Isso é comprovante operacional, não pedido de permissão.
 
 Se Guardrails, Notion ou GitHub Connector não puderem ser usados para cumprir o preflight, o bloco técnico **não pode ser declarado iniciado nem concluído como PASS**. Registrar `BLOCKED` ou `INCONCLUSIVE` conforme o caso, sem substituir essas fontes por memória ou cópia local.
 
@@ -42,11 +42,11 @@ O estado técnico oficial vive no GitHub remoto.
 - usar o GitHub Connector para leitura e escrita remota sempre que tecnicamente disponível;
 - confirmar SHA remoto antes de alterar e SHA remoto depois de alterar;
 - uma cópia local pode ser usada somente como ferramenta auxiliar temporária de análise/build/teste quando necessária;
-- nenhum resultado local é considerado oficial enquanto não estiver refletido no GitHub remoto e identificado por commit/SHA;
+- nenhum resultado local é considerado oficial enquanto não estiver refletido na `main` remota e identificado por commit/SHA;
 - não tomar decisão de estado com base em clone local, pasta local ou memória do chat;
 - ao fechar o bloco, GitHub e Notion devem estar sincronizados sobre fase, resultado e próximo passo.
 
-A meta é que dois chats distintos, lendo Notion e o mesmo SHA remoto, reconstruam a mesma fotografia do projeto.
+A meta é que dois chats distintos, lendo Notion e o mesmo SHA remoto da `main`, reconstruam a mesma fotografia do projeto.
 
 ## 5. Autonomia por bloco
 
@@ -63,7 +63,7 @@ Quando um objetivo está autorizado, o agente executa sem microautorizações as
 - documentação, estado, evidência e aprendizado;
 - seleção/aplicação de skills úteis ao objetivo;
 - refinamento de aprendizado/skill quando coberto pelo sistema de promoção;
-- commit/push na branch de trabalho do bloco quando tecnicamente disponível.
+- commit/push diretamente na `main` durante a fase de descoberta, após fresh-read do HEAD remoto.
 
 Teste é responsabilidade da engenharia. Não perguntar ao proprietário se deve testar, qual ferramenta técnica previsível deve usar ou qual skill aplicável deve carregar.
 
@@ -74,8 +74,8 @@ Atualização de progresso informa; não pede permissão.
 Uma nova autorização objetiva só é necessária quando a ação não estiver incluída no bloco e mudar materialmente:
 
 - objetivo ou alvo;
-- branch protegida ou estratégia de integração;
-- merge/release/publicação quando não previstos no bloco;
+- **criação ou uso de qualquer branch diferente de `main`**;
+- estratégia de integração, merge/release/publicação quando não previstos no bloco;
 - instalação/modificação no equipamento real;
 - transmissão CAN ativa, replay ou atuação física;
 - root, partição, ROM, MCU/IAP ou firmware;
@@ -112,43 +112,39 @@ Ordem padrão do primeiro ciclo:
 
 ROM/firmware são último recurso, não ponto de partida.
 
-## 10. Branches — limite e nomenclatura
+## 10. Branches — main única durante descoberta
 
-O projeto deve permanecer com poucas branches remotas.
+### Regra obrigatória atual
 
-### Limite normal
+**Enquanto o projeto estiver em fase de descoberta/investigação, `main` é a única linha técnica ativa e o único destino oficial de conhecimento.**
 
-Máximo de **3 branches remotas ativas ao mesmo tempo**:
+Tudo que for comprovado ou útil ao projeto — evidência, documentação, decisões, aprendizados, skills, scripts, correções e estado — deve ser consolidado diretamente na `main`.
 
-1. `main` — estado oficial consolidado;
-2. uma única `work/*` — trabalho técnico atual;
-3. uma única `lab/*` — investigação temporária somente quando houver necessidade real de isolamento.
+### Criação ou uso de branch
 
-Não existe `develop` por padrão.
+Nenhuma `work/*`, `lab/*`, `develop` ou outra branch pode ser criada **ou usada para novo trabalho** sem autorização clara e explícita do proprietário para aquele objetivo.
 
-### Nomes permitidos
+A existência de uma ref antiga não concede autorização para usá-la.
 
-Branch de trabalho:
+### Trabalho paralelo
 
-`work/f<fase>-<objetivo-curto>`
+Se outra escrita/bloco/agente estiver atuando no repositório:
 
-Exemplo: `work/f1-hvac-mapeamento`.
+1. não abrir branch para trabalhar em paralelo;
+2. aguardar ou parar a escrita posterior;
+3. quando a escrita anterior terminar, consultar novamente a `main` e o HEAD remoto;
+4. reconciliar as mudanças;
+5. continuar na `main`.
 
-Branch de laboratório:
+**Concorrência é resolvida por serialização e fresh-read, não por dispersão em branches.**
 
-`lab/f<fase>-<pergunta-curta>`
+### Exceção futura
 
-Exemplo: `lab/f1-comparar-apks`.
+Uma branch só pode nascer após autorização explícita do proprietário. Essa autorização deve registrar objetivo e motivo no Notion. Encerrado o objetivo autorizado, todo conhecimento útil volta à `main` e a branch deve ser removida.
 
-### Regras
+### Refs históricas
 
-- não criar branch por ajuste pequeno;
-- não criar nomes `v2`, `v3`, `final`, `final2`, `teste2`;
-- um bloco/fase reutiliza a mesma `work/*` enquanto o objetivo for o mesmo;
-- `lab/*` deve ser temporária;
-- antes de criar branch, consultar branches remotas pelo GitHub Connector;
-- se já houver 3 branches remotas, consolidar ou remover uma temporária antes de criar outra;
-- branch encerrada pode ser removida depois de confirmar que não contém commits únicos necessários.
+Refs antigas que ainda existam devem permanecer sem commits exclusivos e sem uso técnico. Removê-las quando a ferramenta disponível permitir. Até lá, a `main` continua sendo a única fonte e linha ativa.
 
 ## 11. Workflows e artefatos em linguagem humana
 
@@ -222,7 +218,7 @@ Todo bloco técnico termina com:
 - modo Guardrails efetivamente carregado;
 - Notion consultado e sincronizado?;
 - objetivo;
-- repo/branch/commit de entrada e saída;
+- repo/main/commit de entrada e saída;
 - resultado;
 - comprovado;
 - não comprovado;
@@ -232,4 +228,4 @@ Todo bloco técnico termina com:
 - sistemas externos/alvo real alterados?;
 - próximo passo único.
 
-Um bloco não pode receber `PASS` se não houver registro do modo Guardrails usado, preflight no Notion e fotografia remota de branch/commit.
+Um bloco não pode receber `PASS` se não houver registro do modo Guardrails usado, preflight no Notion e fotografia remota de `main`/commit.
