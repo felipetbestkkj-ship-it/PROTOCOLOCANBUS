@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "title": "PROTOCOLOCANBUS HVAC Behavior Contract - Pre-F4",
+  "status": "DRAFT_PRE_F4",
+  "target": {
+    "vehicle_configuration": "Hiworld-Peugeot-208-2023~Present（Brazil）-All",
+    "android_package": "com.can.activity",
+    "manager": "com.autoai.canbus.psa.manager.PeugeotHiworldManager",
+    "protocol": "com.autoai.canbus.psa.protocol.HdPsaProtocol",
+    "transport": "/dev/ttyS5 @ 38400",
+    "tx_command": "0x3B",
+    "rx_state_command": "0x31"
+  },
+  "evidence_classes": ["STATIC", "OBSERVED", "SIMULATED", "INFERRED", "PHYSICAL_PENDING"],
+  "common_physical_link": {
+    "status": "PHYSICAL_PENDING",
+    "one_shot_validation": "docs/F3_ONE_SHOT_VALIDATION.md",
+    "selected_action": "rear_defrost_on",
+    "predicted_tx": "5A A5 02 3B 06 01 43",
+    "predicted_rx_change": "0x31 payload[2] bit5: 0 -> 1"
+  },
+  "rx_layout": {
+    "front_power": {"frame_index": 4, "bit": 6, "state_attr": "power"},
+    "max_ac": {"frame_index": 4, "bit": 5, "state_attr": "max_ac"},
+    "rear_power": {"frame_index": 4, "bit": 4, "state_attr": "rear_hvac"},
+    "auto": {"frame_index": 4, "bit": 3, "state_attr": "auto"},
+    "sync": {"frame_index": 4, "bit": 2, "state_attr": "sync"},
+    "ac": {"frame_index": 4, "bit": 0, "state_attr": "ac"},
+    "recirculation": {"frame_index": 5, "bit": 4, "state_attr": "recirc"},
+    "auto_recirculation": {"frame_index": 5, "bit": 3, "state_attr": "auto_recirc"},
+    "rear_defrost": {"frame_index": 6, "bit": 5, "state_attr": "rear_defrost"},
+    "front_defrost": {"frame_index": 6, "bit": 4, "state_attr": "front_defrost"},
+    "wind_intensity": {"frame_index": 7, "mask": "0x03", "state_attr": "wind"},
+    "airflow": {"frame_index": 8, "mask": "0x0F", "state_attr": "mode", "decode": "nibble->bitmask"},
+    "fan": {"frame_index": 9, "state_attr": "fan"},
+    "left_temperature": {"frame_index": 10, "state_attr": "left_raw"},
+    "right_temperature": {"frame_index": 11, "state_attr": "right_raw"},
+    "outside_temperature": {"frame_index": 15, "state_attr": "outside_raw", "read_only": true}
+  },
+  "functions": [
+    {"id":"front_power","label":"HVAC dianteiro liga/desliga","property":{"id":16385,"area":8,"kind":"boolean"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x01","wire":"0/1"}]},"rx":"front_power","runtime_evidence":"OBSERVED_COMPOSITE","physical_link":"PHYSICAL_PENDING","static_examples":{"on":"5A A5 02 3B 01 01 3E","off":"5A A5 02 3B 01 00 3D"},"rules":["suppress_if_requested_state_equals_current"],"notes":""},
+    {"id":"rear_power","label":"HVAC traseiro liga/desliga","property":{"id":16385,"area":128,"kind":"boolean"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x11","wire":"0/1"}]},"rx":"rear_power","runtime_evidence":"NOT_OBSERVED","physical_link":"PHYSICAL_PENDING","static_examples":{"on":"5A A5 02 3B 11 01 4E","off":"5A A5 02 3B 11 00 4D"},"rules":[],"notes":""},
+    {"id":"ac","label":"A/C liga/desliga","property":{"id":16386,"area":null,"kind":"boolean"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x02","wire":"0/1"}]},"rx":"ac","runtime_evidence":"OBSERVED_COMPOSITE","physical_link":"PHYSICAL_PENDING","static_examples":{"on":"5A A5 02 3B 02 01 3F","off":"5A A5 02 3B 02 00 3E"},"rules":[],"notes":""},
+    {"id":"max_ac","label":"MAX A/C","property":{"id":16396,"area":null,"kind":"boolean"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x03","wire":"0/1"}]},"rx":"max_ac","runtime_evidence":"NOT_OBSERVED","physical_link":"PHYSICAL_PENDING","static_examples":{"on":"5A A5 02 3B 03 01 40","off":"5A A5 02 3B 03 00 3F"},"rules":[],"notes":""},
+    {"id":"auto","label":"AUTO","property":{"id":16395,"area":null,"kind":"boolean"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x04","wire":"0/1"}]},"rx":"auto","runtime_evidence":"NOT_OBSERVED","physical_link":"PHYSICAL_PENDING","static_examples":{"on":"5A A5 02 3B 04 01 41","off":"5A A5 02 3B 04 00 40"},"rules":[],"notes":""},
+    {"id":"sync","label":"SYNC","property":{"id":16404,"area":null,"kind":"boolean"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x0F","wire":"0/1"}]},"rx":"sync","runtime_evidence":"NOT_OBSERVED","physical_link":"PHYSICAL_PENDING","static_examples":{"on":"5A A5 02 3B 0F 01 4C","off":"5A A5 02 3B 0F 00 4B"},"rules":[],"notes":""},
+    {"id":"recirculation","label":"Recirculação","property":{"id":16394,"area":null,"kind":"boolean"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x07","wire":"logical value inverted"}]},"rx":"recirculation","runtime_evidence":"OBSERVED_SINGLE_FIELD","physical_link":"PHYSICAL_PENDING","static_examples":{"logical_on":"5A A5 02 3B 07 00 43","logical_off":"5A A5 02 3B 07 01 44"},"rules":["wire_value_inverted","suppress_if_requested_state_equals_current"],"notes":""},
+    {"id":"auto_recirculation","label":"Recirculação automática","property":{"id":16393,"area":null,"kind":"boolean"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x10","wire":"0/1"}]},"rx":"auto_recirculation","runtime_evidence":"NOT_OBSERVED","physical_link":"PHYSICAL_PENDING","static_examples":{"on":"5A A5 02 3B 10 01 4D","off":"5A A5 02 3B 10 00 4C"},"rules":[],"notes":""},
+    {"id":"front_defrost","label":"Desembaçador dianteiro","property":{"id":24577,"area":1,"kind":"boolean"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x05","wire":"0/1"}]},"rx":"front_defrost","runtime_evidence":"OBSERVED_COMPOSITE","physical_link":"PHYSICAL_PENDING","static_examples":{"on":"5A A5 02 3B 05 01 42","off":"5A A5 02 3B 05 00 41"},"rules":[],"notes":"No trace observado, front defrost altera também fan/airflow e outros campos; macro física ainda não correlacionada ao TX."},
+    {"id":"rear_defrost","label":"Desembaçador traseiro","property":{"id":24577,"area":2,"kind":"boolean"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x06","wire":"0/1"}]},"rx":"rear_defrost","runtime_evidence":"OBSERVED_SINGLE_FIELD","physical_link":"PHYSICAL_PENDING","static_examples":{"on":"5A A5 02 3B 06 01 43","off":"5A A5 02 3B 06 00 42"},"rules":[],"notes":"Função escolhida para o gate físico único porque o retorno real mudou um único campo."},
+    {"id":"fan_step","label":"Ventilador + / -","property":{"id":16390,"area":null,"kind":"step"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x0B","wire":"1=up,2=down"}]},"rx":"fan","runtime_evidence":"OBSERVED_COMPOSITE","physical_link":"PHYSICAL_PENDING","static_examples":{"up":"5A A5 02 3B 0B 01 48","down":"5A A5 02 3B 0B 02 49"},"rules":[],"notes":""},
+    {"id":"fan_setpoint","label":"Ventilador absoluto","property":{"id":16389,"area":null,"kind":"absolute"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x0B","wire":"repeat 1=up or 2=down"}]},"rx":"fan","runtime_evidence":"NOT_OBSERVED","physical_link":"PHYSICAL_PENDING","static_examples":{},"rules":["compare_target_to_current_fan","emit_repeated_steps_until_target"],"notes":""},
+    {"id":"left_temp_step","label":"Temperatura esquerda + / -","property":{"id":16388,"area":"left","kind":"step"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x0C","wire":"1=up,2=down"}]},"rx":"left_temperature","runtime_evidence":"NOT_OBSERVED","physical_link":"PHYSICAL_PENDING","static_examples":{"up":"5A A5 02 3B 0C 01 49","down":"5A A5 02 3B 0C 02 4A"},"rules":[],"notes":""},
+    {"id":"right_temp_step","label":"Temperatura direita + / -","property":{"id":16388,"area":4,"kind":"step"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x0D","wire":"1=up,2=down"}]},"rx":"right_temperature","runtime_evidence":"NOT_OBSERVED","physical_link":"PHYSICAL_PENDING","static_examples":{"up":"5A A5 02 3B 0D 01 4A","down":"5A A5 02 3B 0D 02 4B"},"rules":[],"notes":""},
+    {"id":"left_temp_setpoint","label":"Temperatura esquerda absoluta","property":{"id":16387,"area":"left","kind":"absolute"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x0C","wire":"repeat 1=up or 2=down"}]},"rx":"left_temperature","runtime_evidence":"NOT_OBSERVED","physical_link":"PHYSICAL_PENDING","static_examples":{},"rules":["compare_target_to_current_temperature","emit_one_or_two_steps_per_request_according_to_temp_unit"],"notes":""},
+    {"id":"right_temp_setpoint","label":"Temperatura direita absoluta","property":{"id":16387,"area":4,"kind":"absolute"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x0D","wire":"repeat 1=up or 2=down"}]},"rx":"right_temperature","runtime_evidence":"NOT_OBSERVED","physical_link":"PHYSICAL_PENDING","static_examples":{},"rules":["compare_target_to_current_temperature","emit_one_or_two_steps_per_request_according_to_temp_unit"],"notes":""},
+    {"id":"airflow","label":"Direção do ar","property":{"id":16391,"area":null,"kind":"bitmask"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x08","wire":"bit1 0/1"},{"subcommand":"0x09","wire":"bit2 0/1"},{"subcommand":"0x0A","wire":"bit4 0/1"}]},"rx":"airflow","runtime_evidence":"OBSERVED_COMPOSITE","physical_link":"PHYSICAL_PENDING","static_examples":{},"rules":["compare_target_bitmask_to_current","emit_only_changed_bits"],"notes":""},
+    {"id":"wind_intensity","label":"Intensidade/modo adicional","property":{"id":16392,"area":null,"kind":"enum_0_2"},"tx":{"cmd":"0x3B","subcommands":[{"subcommand":"0x0E","wire":"0..2"}]},"rx":"wind_intensity","runtime_evidence":"NOT_OBSERVED","physical_link":"PHYSICAL_PENDING","static_examples":{"0":"5A A5 02 3B 0E 00 4A","1":"5A A5 02 3B 0E 01 4B","2":"5A A5 02 3B 0E 02 4C"},"rules":[],"notes":""}
+  ]
+}
