@@ -17,3 +17,11 @@ Aprendizados fechados e pendentes. O banco completo fica no Notion.
 **Causa:** a trilha de execução mistura orquestração transitória com evidência e decisões; copiá-la integralmente transfere ruído para o próximo agente.  
 **Prevenção:** no fechamento material, classificar somente fatos do projeto, aprendizados operacionais, candidatos a skill e hipóteses; registrar apenas itens úteis.  
 **Regra:** usar `skills/reusable-engineering-learning/SKILL.md`; transcript/log de ações não é, por si só, aprendizado.
+
+## L-003 — Branch permitida não significa branch necessária
+
+**Estado:** Fechado  
+**Observação:** foi criada `lab/f0-learning-system` apenas para isolar uma melhoria paralela enquanto outra `work/*` estava ativa, embora a mudança pudesse aguardar consolidação e não tivesse necessidade técnica concreta de isolamento experimental.  
+**Causa:** o limite `main + work/* + lab/*` foi interpretado como estrutura disponível a ocupar, em vez de teto máximo para exceções justificadas.  
+**Prevenção:** antes de criar qualquer branch, provar a necessidade: reutilizar a linha ativa quando o objetivo for o mesmo; aguardar consolidação quando a mudança puder esperar; usar `lab/*` somente se houver isolamento técnico real que reduza risco ou permita experimento descartável. Trabalho paralelo de outro agente, sozinho, não basta.  
+**Regra:** o menor número de branches é o padrão; **3 é teto, não meta**. Se a nova branch não tiver uma justificativa técnica concreta que possa ser registrada em uma frase, não criar.
