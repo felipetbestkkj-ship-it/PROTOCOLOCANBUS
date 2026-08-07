@@ -8,6 +8,7 @@
 **Governança F0.2:** PASS — sistema de aprendizado/skills integrado  
 **Governança F0.4:** PASS — `main` única durante descoberta  
 **Governança F0.5:** PASS — decisão permanente de branch por risco + autorização explícita  
+**Governança D-013:** vigente — conhecimento técnico em duas camadas, com mapa anti-retrabalho  
 **Fase F1:** PASS — consolidada na `main`  
 **Fase F2:** PASS — cadeia HVAC original mapeada  
 **Fase atual:** F3 — ATIVA; marco passivo das evidências CANBOX concluído, correlação controlada ainda pendente  
@@ -40,6 +41,21 @@ Na descoberta/investigação atual, o gate continua resultando em `main` única.
 Política detalhada: `docs/BRANCH_POLICY.md`.
 
 Verificação remota atual: apenas a branch `main` existe.
+
+## D-013 — sistema anti-retrabalho de conhecimento
+
+Toda descoberta técnica material é preservada em duas camadas:
+
+1. **GitHub/versionado:** detalhe reproduzível, evidência, hashes, relatórios, scripts e tabelas técnicas.
+2. **Notion/mapa humano:** resumo no topo + detalhe suficiente para consulta sem redescoberta.
+
+Para Car Info/Hiworld/HVAC/CANBOX, o mapa humano atual é:
+
+**`08 — Mapa Técnico Consolidado — Car Info / Hiworld / HVAC`**
+
+Ele preserva arquitetura, camada/transporte, framing, mapa RX/TX, offsets e bits de `0x31`, subcomandos `0x3B`, exemplos, contagens, latências, eventos, firmware/IAP, anomalias, hipóteses descartadas, fatos confirmados e lacunas.
+
+**Regra:** fonte bruta é reaberta para verificar, testar hipótese nova, resolver contradição ou aprofundar lacuna — não para redescobrir algo já consolidado.
 
 ## F1 — resultado consolidado
 
@@ -106,11 +122,6 @@ Relatório técnico: `docs/F3_CAN_RUNTIME_EVIDENCE_DEEP_DIVE.md`
 - o IAP fornecido `H1H2PAF23A-230802` pertence à mesma família PAF23A, porém é mais antigo e não prova a imagem exata instalada;
 - os quatro IAPs fornecidos compartilham 13 bytes iniciais e depois divergem; não há base para afirmar criptografia ou compressão.
 
-### Aprendizado promovido
-
-- `L-007 — Protocolo CANBOX serial não é CAN bruto do veículo`;
-- regra: **primeiro provar a camada/transporte; depois interpretar o ID**.
-
 ### F3 ainda não comprovou
 
 - ação/touch original → TX `0x3B` → ACK → RX `0x31` → efeito físico;
@@ -135,7 +146,10 @@ Não construir nem transmitir frames manualmente por hipótese e não usar repla
 - `SKILLS_INDEX.md`, `docs/LEARNING_SYSTEM.md` e skills próprias estão integrados na `main`;
 - `LEARNINGS.md` é resumo versionado; banco Aprendizados do Notion mantém histórico/status;
 - novos aprendizados são registrados na linha de trabalho autorizada e consolidados na `main` quando aplicável;
-- `L-007` está registrado como candidato a refinamento da skill `can-frame-differential-analysis`.
+- `L-005` foi promovido para `runtime-static-correlation`: frame estático ≠ TX observado;
+- `L-006` foi promovido para `reusable-engineering-learning`: fresh-read antes de reservar ID e verificação de unicidade após criar;
+- `L-007` foi promovido para `can-frame-differential-analysis`: provar camada/transporte antes de interpretar ID;
+- `L-008` foi promovido para `reusable-engineering-learning`: teste anti-retrabalho e documentação em duas camadas.
 
 ## Invariantes
 
@@ -148,6 +162,7 @@ Não construir nem transmitir frames manualmente por hipótese e não usar repla
 - autonomia por bloco sem microautorizações técnicas;
 - evidência original preservada;
 - **camada/transporte devem ser provados antes de interpretar IDs de protocolo**;
+- **descoberta material deve deixar detalhe versionado + mapa humano anti-retrabalho**;
 - código estático não prova efeito físico;
 - UI/widget futuros compartilham uma única camada de controle;
 - ROM/firmware somente se camadas superiores forem insuficientes;
