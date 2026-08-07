@@ -87,3 +87,12 @@ Aprendizados fechados e pendentes. O banco completo fica no Notion.
 **Prevenção:** quando hardware real for caro em tempo/risco, construir primeiro vocabulário + gramática + endpoint fake, testar regressões e ranquear experimentos por poder discriminatório.  
 **Regra:** só pedir múltiplos testes físicos quando um experimento único não puder validar o elo comum; preferir transição de campo único com comando estático único e retorno observável, mantendo `STATIC/OBSERVED/SIMULATED/INFERRED` separados.  
 **Promoção:** promovido em `skills/protocol-digital-twin-inference/SKILL.md`.
+
+## L-011 — Capacidade do protocolo não prova feature no veículo-alvo
+
+**Estado:** Fechado  
+**Observação:** o `HdPsaProtocol` expõe property, subcomando e bit rotulados como `rear_defrost`, e o runtime mostra esse bit alternando; porém o proprietário confirmou que o veículo-alvo possui somente desembaçador dianteiro.  
+**Causa:** capacidade genérica do protocolo foi confundida com disponibilidade física da função no veículo específico.  
+**Prevenção:** manter perfil de capacidades do alvo separado do catálogo genérico; antes de promover property/bit/subcomando para UI, contrato de produto ou teste físico, verificar aplicabilidade real ao alvo.  
+**Regra:** **capacidade do protocolo ≠ capacidade física do alvo**. `rear_defrost` fica preservado como semântica genérica, mas `NOT_PRESENT_ON_TARGET`; o gate F3 passa a ser recirculação OFF→ON.  
+**Promoção:** promovido/refinado em `skills/protocol-digital-twin-inference/SKILL.md`. Ver `contracts/hvac_target_profile.json` e `docs/L011_PROTOCOL_CAPABILITY_VS_TARGET_FEATURE.md`.
