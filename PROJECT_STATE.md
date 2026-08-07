@@ -11,7 +11,7 @@
 **Governança D-013:** vigente — conhecimento técnico em duas camadas, com mapa anti-retrabalho  
 **Fase F1:** PASS — consolidada na `main`  
 **Fase F2:** PASS — cadeia HVAC original mapeada  
-**Fase atual:** F3 — ATIVA; investigação passiva do caminho conhecido esgotada, correlação controlada no alvo ainda pendente  
+**Fase atual:** F3 — ATIVA; investigação passiva do caminho conhecido esgotada e analisador reproduzível versionado, correlação controlada no alvo ainda pendente  
 **Última atualização:** 2026-08-07
 
 ## Missão atual
@@ -94,6 +94,10 @@ Relatórios técnicos:
 - `docs/F3_CAN_RUNTIME_EVIDENCE_DEEP_DIVE.md`;
 - `docs/F3_PASSIVE_CONTINUATION_TX_COVERAGE.md`.
 
+Ferramenta reproduzível:
+
+- `scripts/analyze_hiword_candata.py` — parser passivo, sem I/O de dispositivo ou transmissão; reconstrói frames `5A A5`, valida checksum, separa TX/RX, classifica polling versus RX não solicitado, decodifica `0x31` e expõe o campo candidato de `0x1A`.
+
 ### Hierarquia das fontes confirmada
 
 - `candata_5 → candata_6 → candata_7 → candata_8` são snapshots progressivos por prefixo exato; `candata_8` é a captura canônica mais completa;
@@ -124,11 +128,18 @@ Relatórios técnicos:
 - todo o vocabulário TX de `candata_8` foi classificado: `0xFF` (251 ACK), `0xCB` (50 data/hora), `0x6A` (8 consultas), `0xA1` (7 mídia/source/volume) e `0xA4` (3 mídia/CD-CDC); **não há outro ID TX** e `0x3B=0`;
 - `0xA1` é produzido por `getMediaData(...)`; o payload observado `80 07 0F` contém marcador `0x80`, código source/media `0x07` e volume 15;
 - `0xA4` é produzido por `getMediaSource(...)`; os três payloads observados são 11 bytes zerados e pertencem à superfície de mídia, não HVAC;
-- 16 linhas RX `0x31` colapsam em 8 eventos lógicos adjacentes; somente o primeiro segue uma consulta `0x6A → 0x31` (+~64 ms); **os sete eventos lógicos seguintes são `RX_NAO_SOLICITADO` pelo mecanismo 0x6A**;
+- 16 linhas RX `0x31` colapsam em 8 eventos lógicos; somente o primeiro segue uma consulta `0x6A → 0x31` (+~64 ms); **os sete eventos lógicos seguintes são `RX_NAO_SOLICITADO` pelo mecanismo 0x6A**;
 - esses sete pushes formam uma sequência coerente de front/rear defrost, recirculação, power, A/C e fan, mas não possuem `TX 0x3B` correspondente;
 - consequentemente, **as sete mudanças não foram produzidas pelo caminho HVAC conhecido do Car Info durante a captura**;
 - a origem ainda permanece aberta entre controles/estado originados no veículo e algum produtor/caminho alternativo que bypassasse o fluxo conhecido;
 - após transição `0x11` de ACC/KeyIn para ativo, o campo `0x1A data[9:10]` sobe de 0 para 1356, atinge 1474 e decai para ~800–900; comportamento é fortemente compatível com RPM de partida/marcha lenta, porém permanece **hipótese forte**, pois falta parser PSA ativo ou referência independente timestampada.
+
+### Validação da ferramenta reproduzível
+
+- `scripts/analyze_hiword_candata.py --self-test` → **PASS**;
+- execução contra `candata_8.log` reproduziu **821 frames**, **821 checksums válidos**, **0 TX `0x3B`**, **8 eventos lógicos `0x31`**, dos quais **1 `RESPOSTA_SOLICITADA`** e **7 `RX_NAO_SOLICITADO`**;
+- o primeiro self-test revelou que uma cópia duplicada de RX pode ter ACK intercalado; o deduplicador foi corrigido para usar mesmo `(direção, frame exato)` dentro de janela de 10 ms, preservando o comportamento real observado;
+- essa ferramenta é auxiliar de análise e não define sozinha fatos técnicos: resultados relevantes continuam sendo cruzados com código estático, logs e evidência oficial.
 
 ### F3 ainda não comprovou
 
