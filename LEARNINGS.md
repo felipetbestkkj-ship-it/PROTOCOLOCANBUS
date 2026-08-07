@@ -41,7 +41,7 @@ Aprendizados fechados e pendentes. O banco completo fica no Notion.
 **Causa:** código estático mostra o que a implementação pode construir; runtime mostra o que realmente ocorreu. São evidências complementares, não equivalentes.  
 **Prevenção:** rotular frames como `construído estaticamente`, `TX observado`, `RX observado` ou `correlacionado`.  
 **Regra:** para promover comando a comportamento comprovado, exigir `ação controlada → timestamp → TX → RX/estado`; ausência de TX permanece lacuna explícita.  
-**Promoção:** candidato a `skills/runtime-static-correlation/SKILL.md`.
+**Promoção:** promovido/refinado em `skills/runtime-static-correlation/SKILL.md`.
 
 ## L-006 — Reservar ID de aprendizado somente após leitura fresca
 
@@ -50,7 +50,7 @@ Aprendizados fechados e pendentes. O banco completo fica no Notion.
 **Causa:** o próximo identificador foi escolhido a partir de uma fotografia que deixou de ser atual antes da criação do registro.  
 **Prevenção:** em ambiente com possíveis escritores concorrentes, consultar novamente o banco imediatamente antes de criar aprendizado numerado; se houver colisão, preservar um canônico e marcar o duplicado como descartado.  
 **Regra:** antes de criar `L-NNN`: fresh-read dos IDs → escolher próximo livre → criar → reconsultar e verificar unicidade.  
-**Promoção:** candidato a `skills/reusable-engineering-learning/SKILL.md`.
+**Promoção:** promovido/refinado em `skills/reusable-engineering-learning/SKILL.md`.
 
 ## L-007 — Protocolo CANBOX serial não é CAN bruto do veículo
 
@@ -59,7 +59,7 @@ Aprendizados fechados e pendentes. O banco completo fica no Notion.
 **Causa:** a camada e o transporte não estavam rotulados antes da interpretação dos IDs, permitindo confundir command IDs do gateway com arbitration IDs CAN do Peugeot.  
 **Prevenção:** em toda captura, identificar primeiro framing, direção, transporte e camada; só depois atribuir semântica ao ID.  
 **Regra:** para este equipamento, `candata = protocolo Hiworld serial em /dev/ttyS5 @ 38400`; `0x31`, `0x3B`, `0x6A` e `0xFF` são IDs/comandos da CANBOX, não CAN IDs veiculares comprovados.  
-**Promoção:** candidato a refinamento de `skills/can-frame-differential-analysis/SKILL.md`.
+**Promoção:** promovido/refinado em `skills/can-frame-differential-analysis/SKILL.md`.
 
 ## L-008 — Resumo sem mapa técnico ainda gera retrabalho
 
@@ -68,4 +68,4 @@ Aprendizados fechados e pendentes. O banco completo fica no Notion.
 **Causa:** existia uma boa separação entre estado operacional e relatório técnico, mas faltava uma ponte humana detalhada entre os dois.  
 **Prevenção:** manter documentação material em duas camadas: resumo rápido + mapa técnico consolidado. Para protocolos/binários, registrar framing, offsets/bits, IDs/subcomandos, exemplos, contagens, confiança, hipóteses descartadas e lacunas.  
 **Regra:** teste anti-retrabalho = um agente novo consegue responder o que é o byte/comando, em qual camada atua, se foi observado ou apenas construído estaticamente, qual fonte prova e o que falta provar sem repetir a engenharia reversa original.  
-**Promoção:** candidato a refinamento de `skills/reusable-engineering-learning/SKILL.md`.
+**Promoção:** promovido/refinado em `skills/reusable-engineering-learning/SKILL.md`.
