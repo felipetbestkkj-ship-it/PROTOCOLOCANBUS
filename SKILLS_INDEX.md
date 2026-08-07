@@ -23,12 +23,14 @@ Este arquivo é o catálogo técnico canônico das skills próprias do projeto. 
 | `cross-source-state-reconciliation` | Notion, GitHub e evidência parecem divergir | identificar qual fonte governa cada fato, corrigir o estado obsoleto e registrar a reconciliação |
 | `can-frame-differential-analysis` | analisar logs/frames CAN de forma passiva | framing, agrupamento, periodicidade, request/response, diferenças de payload e hipóteses explicitamente marcadas |
 | `evidence-narrowing` | investigação está ampla ou ruidosa | reduzir superfície pela evidência com maior poder discriminatório e manter lacunas explícitas |
+| `protocol-digital-twin-inference` | protocolo parcialmente reconstruído + hardware caro para validar | vocabulário + state machine + parser/generator + endpoint fake + um experimento físico de máxima informação |
 
 ## Combinações típicas
 
 - **Novo APK:** `artifact-forensics` → `android-apk-differential-triage` → `evidence-narrowing`.
 - **Entender uma ação HVAC:** `evidence-narrowing` → `runtime-static-correlation`; adicionar `can-frame-differential-analysis` quando houver frames relevantes.
 - **Comparar logs CAN:** `artifact-forensics` quando o arquivo for novo → `can-frame-differential-analysis` → `runtime-static-correlation` se houver ação/tempo observável.
+- **Reduzir uso do equipamento real:** `can-frame-differential-analysis` → `protocol-digital-twin-inference` → `runtime-static-correlation` apenas para o experimento final discriminatório.
 - **Divergência de estado:** `cross-source-state-reconciliation`.
 - **Fechamento de bloco:** `reusable-engineering-learning` depois da verificação técnica.
 
