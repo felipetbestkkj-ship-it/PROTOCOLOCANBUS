@@ -3,188 +3,195 @@
 **Projeto:** PROTOCOLOCANBUS  
 **Repositório:** `felipetbestkkj-ship-it/PROTOCOLOCANBUS`  
 **Visibilidade:** pública por decisão explícita do proprietário  
-**Fundação F0:** PASS — publicada e verificável  
-**Governança F0.1:** PASS — operação remote-first definida  
-**Governança F0.2:** PASS — sistema de aprendizado/skills integrado  
-**Governança F0.4:** PASS — `main` única durante descoberta  
-**Governança F0.5:** PASS — decisão permanente de branch por risco + autorização explícita  
-**Governança D-013:** vigente — conhecimento técnico em duas camadas, com mapa anti-retrabalho  
-**Fase F1:** PASS — consolidada na `main`  
-**Fase F2:** PASS — cadeia HVAC original mapeada  
-**Fase atual:** F3 — ATIVA; investigação passiva do caminho conhecido esgotada e analisador reproduzível versionado, correlação controlada no alvo ainda pendente  
+**Linha consolidada:** somente `main` durante a descoberta, salvo autorização explícita para branch  
+**F0:** PASS  
+**F1:** PASS — triagem Car Info/HVAC  
+**F2:** PASS — cadeia HVAC original  
+**F3:** ATIVA / PARTIAL — gêmeo digital offline concluído; resta somente o gate físico único  
 **Última atualização:** 2026-08-07
 
 ## Missão atual
 
-Reconstruir de forma dirigida a cadeia Car Info/HVAC a partir das evidências locais, mantendo o projeto autossuficiente e sem herança técnica de repositórios anteriores.
+Reconstruir de forma dirigida a cadeia Car Info/HVAC a partir das evidências do próprio projeto, sem herança técnica de repositórios anteriores, até obter uma camada própria, testável e reproduzível.
 
-## Ordem de entrada oficial
+## Ordem operacional
 
 `Notion → Codex Engineering Guardrails → GitHub Connector → execução → GitHub atualizado → Notion sincronizado`
 
-Estado local nunca substitui o GitHub remoto.
+Estado local e memória do chat nunca substituem o remoto.
 
-## Política de branch vigente — risco + autorização
+## Governança vigente
 
-**`main` é o padrão permanente. Branch é ferramenta de isolamento de risco, não etapa obrigatória.**
+- `main` é o padrão e estado consolidado;
+- qualquer branch diferente de `main` exige autorização clara e explícita do proprietário;
+- concorrência durante descoberta é resolvida por serialização/fresh-read, não por branch automática;
+- operação remote-first;
+- alvo real, transmissão CAN, replay, instalação, ROM/firmware/root e outras fronteiras materiais exigem autorização própria;
+- D-013 vigente: descoberta material deve deixar **detalhe reproduzível/versionado no GitHub + mapa humano anti-retrabalho no Notion**.
 
-A engenharia pode recomendar uma branch quando provar benefício concreto de isolamento, por exemplo preservar executável conhecido como bom, isolar mudança executável potencialmente quebrável, comparar implementações independentes, permitir paralelismo de código realmente não serializável ou separar hotfix/release.
+Detalhes: `AGENTS.md`, `REMOTE_OPERATION_POLICY.md`, `WORKFLOWS.md`, `ROADMAP.md`, `docs/BRANCH_POLICY.md`.
 
-Mesmo nesses casos, **criar ou usar qualquer branch diferente de `main` exige autorização clara e explícita do proprietário para aquele objetivo**.
+## F1 — triagem Car Info/HVAC
 
-Depois da autorização, a autonomia normal do bloco permanece: commits, testes, correções e documentação dentro da linha autorizada não exigem microautorizações. Merge/release/publicação continuam fronteiras separadas, salvo se a autorização original as incluir.
+Relatório: `docs/F1_CARINFO_HVAC_TRIAGEM.md`.
 
-Sem autorização, somente `main`. O padrão autorizado normal é `main` + uma branch temporária; uma segunda branch simultânea exige justificativa própria e nova autorização.
+Confirmado:
 
-Na descoberta/investigação atual, o gate continua resultando em `main` única. Se houver outra escrita/bloco/agente em andamento, o trabalho posterior aguarda ou para, faz fresh-read da `main`, reconcilia e continua nela.
-
-Política detalhada: `docs/BRANCH_POLICY.md`.
-
-Verificação remota atual: apenas a branch `main` existe.
-
-## D-013 — sistema anti-retrabalho de conhecimento
-
-Toda descoberta técnica material é preservada em duas camadas:
-
-1. **GitHub/versionado:** detalhe reproduzível, evidência, hashes, relatórios, scripts e tabelas técnicas.
-2. **Notion/mapa humano:** resumo no topo + detalhe suficiente para consulta sem redescoberta.
-
-Para Car Info/Hiworld/HVAC/CANBOX, o mapa humano atual é:
-
-**`08 — Mapa Técnico Consolidado — Car Info / Hiworld / HVAC`**
-
-Ele preserva arquitetura, camada/transporte, framing, mapa RX/TX, offsets e bits de `0x31`, subcomandos `0x3B`, exemplos, contagens, latências, eventos, firmware/IAP, anomalias, hipóteses descartadas, fatos confirmados e lacunas.
-
-**Regra:** fonte bruta é reaberta para verificar, testar hipótese nova, resolver contradição ou aprofundar lacuna — não para redescobrir algo já consolidado.
-
-## F1 — resultado consolidado
-
-Relatório técnico: `docs/F1_CARINFO_HVAC_TRIAGEM.md`
-
-### Comprovado na F1
-
-- `Car Info / com.can.activity` permanece o alvo central do HVAC;
+- alvo central: `Car Info / com.can.activity`;
 - `INSTALAR-v3854-CarInfo-HVAC-Visual-V1.apk` é byte a byte o APK registrado como instalado na baseline, SHA-256 `d0741a541fc575d3b25bc853a171532b815e8c396451dcc9ebe0f678d1905a50`;
 - baseline: `versionCode=3854`, shared user `android.uid.system/1000`, contexto privilegiado/persistente;
-- manifesto original → v3854 altera `versionCode` 3853 → 3854; package/shared UID/componentes inspecionados permanecem iguais;
-- `HvacActivity`, `HvacFragment` e `HvacModel` apresentam código decompilado idêntico entre original e v3854;
-- mudança significativa observada na superfície HVAC da v3854 concentra-se em layouts, cores e novos drawables;
+- diferenças significativas da v3854 na superfície HVAC concentram-se em layout/cores/drawables; `HvacActivity`, `HvacFragment` e `HvacModel` permaneceram iguais na comparação realizada;
 - cadeia estática alcança `HvacFragment → HvacViewModel/HvacModel → CanBusManager → CanPopWind → ICanUI/ICanBus`;
-- runtime confirma Car Info/Jancar, enquadramento `5A A5` e identificador Hiworld `H1H2PAF23A-240409`;
-- captura runtime posterior contém crash/restart loop de `com.can.activity` tentando carregar caminho antigo de `base.apk` inexistente.
+- runtime confirma Car Info/Jancar, framing `5A A5` e Hiworld `H1H2PAF23A-240409`;
+- crash/restart loop de `com.can.activity` tentando caminho antigo de `base.apk` permanece aprendizado L-004 com causa ainda não provada.
 
 ## F2 — cadeia HVAC original
 
-Relatório técnico: `docs/F2_HVAC_ORIGINAL_CHAIN.md`
+Relatório: `docs/F2_HVAC_ORIGINAL_CHAIN.md`.
 
-### Comprovado na F2
+Confirmado:
 
-- UI envia `CarPropertyValue`, não bytes CAN diretamente;
-- cadeia de controle chega a `CanBusService.setHvacProperty → mObjProtocol.buildHvacPackets → CanProxy/CanSender → CanRxTx.sendData`;
-- `PeugeotHiworldManager` aponta a família inspecionada para `HdPsaProtocol`;
-- runtime identifica `Hiworld-Peugeot-208-2023~Present（Brazil）-All`;
-- `HdPsaProtocol` traduz propriedades HVAC para `5A A5 02 3B <subcomando> <valor> <checksum>`;
-- `rxAirInfoCmdId = 0x31`; `HdPsaProtocol` decodifica `0x31` para power, A/C, MAX A/C, AUTO, SYNC, recirculação, desembaçadores, fan, direção e temperaturas;
-- retorno percorre `CanPopWind/ICanBus → HvacModel/ViewModel → HvacFragment.setHvacInfo`.
+- a UI envia `CarPropertyValue`, não bytes diretamente;
+- controle: `HvacFragment → HvacViewModel/HvacModel → CanBusManager → ICanBus → CanBusService.setHvacProperty → HdPsaProtocol.buildHvacPackets → CanProxy/CanSender → CanRxTx.sendData`;
+- `PeugeotHiworldManager` aponta para `HdPsaProtocol`, coerente com runtime `Hiworld-Peugeot-208-2023~Present（Brazil）-All`;
+- controles HVAC são construídos como `5A A5 02 3B <subcomando> <valor> <checksum>`;
+- `0x31` é registrado/decodificado como estado HVAC e retorna a `HvacInfo → HvacModel/ViewModel → HvacFragment`.
 
-## F3 — evidências CANBOX/runtime
+## F3 — correlação runtime e laboratório offline
 
-Relatórios técnicos:
+Relatórios:
 
 - `docs/F3_CAN_RUNTIME_EVIDENCE_DEEP_DIVE.md`;
-- `docs/F3_PASSIVE_CONTINUATION_TX_COVERAGE.md`.
+- `docs/F3_PASSIVE_CONTINUATION_TX_COVERAGE.md`;
+- `docs/F3_HVAC_DIGITAL_TWIN.md`;
+- `docs/F3_ONE_SHOT_VALIDATION.md`;
+- `docs/F3_RUNTIME_CAPTURE_PROTOCOL.md` — referência geral/fallback de captura; **não é mais a sequência recomendada ao proprietário**.
 
-Ferramenta reproduzível:
+Ferramentas:
 
-- `scripts/analyze_hiword_candata.py` — parser passivo, sem I/O de dispositivo ou transmissão; reconstrói frames `5A A5`, valida checksum, separa TX/RX, classifica polling versus RX não solicitado, decodifica `0x31` e expõe o campo candidato de `0x1A`.
+- `scripts/analyze_hiword_candata.py` — parser passivo de captures Hiworld;
+- `scripts/hiworld_hvac_digital_twin.py` — gêmeo digital offline/fake CANBOX; sem I/O de dispositivo e sem transmissão.
 
-### Hierarquia das fontes confirmada
+Testes:
 
-- `candata_5 → candata_6 → candata_7 → candata_8` são snapshots progressivos por prefixo exato; `candata_8` é a captura canônica mais completa;
-- `CANBOX_RUNTIME_CAPTURE_2026-08-06_1201 (2).zip` contém os 15 arquivos centrais do ZIP menor byte a byte idênticos e acrescenta 76 diagnósticos;
-- `Engenharia-Reversa-CANBOX.zip` é artefato derivado com diretório central/EOCD ausente, mas 4.122 entradas recuperáveis por cabeçalhos locais.
+- `tests/test_hiword_hvac_digital_twin.py`.
 
-### Camada e transporte confirmados
+### Camada e framing comprovados
 
-- os `candata_*` **não são CAN bruto do Peugeot**; registram o protocolo serial Hiworld/Jancar no limite Android/Car Info ↔ CANBOX;
-- no RK3326 observado, o caminho sustentado é `Car Info/Jancar → /dev/ttyS5 @ 38400 → CANBOX Hiworld → CAN veicular`;
-- a configuração converge para `Hiworld-Peugeot-208-2023~Present（Brazil）-All`;
-- `0x31`, `0x3B`, `0x6A` e `0xFF` são IDs/comandos do protocolo CANBOX, não arbitration IDs CAN veiculares comprovados.
+- `candata_5 → 6 → 7 → 8` são snapshots progressivos; `candata_8` é a captura canônica mais completa;
+- `candata_*` registra **serial Hiworld/Jancar Android ↔ CANBOX**, não CAN bruto do Peugeot;
+- caminho observado: `Car Info/Jancar → /dev/ttyS5 @ 38400 → CANBOX Hiworld → CAN veicular`;
+- framing: `5A A5 <LEN> <CMD> <DATA...> <CHECKSUM>`;
+- `candata_8`: 821 frames reconstruídos e 821/821 checksums válidos;
+- `0xFF/0xFE` são ACKs;
+- `0x6A` consulta relatórios; o polling inclui `0x31` HVAC;
+- Hiworld runtime: `H1H2PAF23A-240409`.
 
-### Protocolo/runtime confirmados
+### TX/RX runtime
 
-- framing: `5A A5 <len> <cmd> <data...> <checksum>`;
-- `candata_8` contém 821 frames reconstruídos e 821/821 checksums aditivos válidos;
-- `0xFF`/`0xFE` são ACKs;
-- `TX 0x6A` é o mecanismo de consulta: a captura mostra pedidos `0x11, 0x31, 0x94, 0x71, 0x72, 0x76, 0x79, 0xF0` seguidos dos relatórios correspondentes;
-- `RX 0x31` mostra transições de power, A/C, recirculação, front/rear defrost, fan e airflow;
-- continua havendo **zero TX `0x3B`** em `candata_5..8`;
-- `0x1A` não é registrado/decodificado pelo `HdPsaProtocol`; nessa implementação o ID de 360/parking é `0xE8`, logo `0x1A` não é promovido como 360/parking;
-- `RX 0xF0` reporta `H1H2PAF23A-240409`.
+Todo o vocabulário TX de `candata_8` foi esgotado:
 
-### Narrowing passivo adicional confirmado
+- `0xFF` = 251 ACK;
+- `0xCB` = 50 hora/data;
+- `0x6A` = 8 consultas;
+- `0xA1` = 7 mídia/source/volume;
+- `0xA4` = 3 mídia/CD-CDC;
+- `0x3B` = **0**.
 
-- o caminho de controle conhecido `setHvacProperty → mCanProxy → CanSender → doTx` entrega ao `DbgAssist` o mesmo pacote enviado para a porta; um frame HVAC `0x3B` de 7 bytes seria capturável no `candata` quando TX está habilitado;
-- todo o vocabulário TX de `candata_8` foi classificado: `0xFF` (251 ACK), `0xCB` (50 data/hora), `0x6A` (8 consultas), `0xA1` (7 mídia/source/volume) e `0xA4` (3 mídia/CD-CDC); **não há outro ID TX** e `0x3B=0`;
-- `0xA1` é produzido por `getMediaData(...)`; o payload observado `80 07 0F` contém marcador `0x80`, código source/media `0x07` e volume 15;
-- `0xA4` é produzido por `getMediaSource(...)`; os três payloads observados são 11 bytes zerados e pertencem à superfície de mídia, não HVAC;
-- 16 linhas RX `0x31` colapsam em 8 eventos lógicos; somente o primeiro segue uma consulta `0x6A → 0x31` (+~64 ms); **os sete eventos lógicos seguintes são `RX_NAO_SOLICITADO` pelo mecanismo 0x6A**;
-- esses sete pushes formam uma sequência coerente de front/rear defrost, recirculação, power, A/C e fan, mas não possuem `TX 0x3B` correspondente;
-- consequentemente, **as sete mudanças não foram produzidas pelo caminho HVAC conhecido do Car Info durante a captura**;
-- a origem ainda permanece aberta entre controles/estado originados no veículo e algum produtor/caminho alternativo que bypassasse o fluxo conhecido;
-- após transição `0x11` de ACC/KeyIn para ativo, o campo `0x1A data[9:10]` sobe de 0 para 1356, atinge 1474 e decai para ~800–900; comportamento é fortemente compatível com RPM de partida/marcha lenta, porém permanece **hipótese forte**, pois falta parser PSA ativo ou referência independente timestampada.
+O caminho conhecido `setHvacProperty → mCanProxy → CanSender → doTx` entrega ao logger TX o mesmo pacote enviado à porta. Um `0x3B` de 7 bytes seria capturável. Portanto os sete pushes HVAC existentes **não foram produzidos pelo caminho HVAC conhecido do Car Info durante aquela captura**.
 
-### Validação da ferramenta reproduzível
+Os 16 RX `0x31` representam 8 estados lógicos; somente o primeiro é resposta a `0x6A → 0x31`. Os outros 7 são `RX_NAO_SOLICITADO` pelo mecanismo de polling conhecido.
 
-- `scripts/analyze_hiword_candata.py --self-test` → **PASS**;
-- execução contra `candata_8.log` reproduziu **821 frames**, **821 checksums válidos**, **0 TX `0x3B`**, **8 eventos lógicos `0x31`**, dos quais **1 `RESPOSTA_SOLICITADA`** e **7 `RX_NAO_SOLICITADO`**;
-- o primeiro self-test revelou que uma cópia duplicada de RX pode ter ACK intercalado; o deduplicador foi corrigido para usar mesmo `(direção, frame exato)` dentro de janela de 10 ms, preservando o comportamento real observado;
-- essa ferramenta é auxiliar de análise e não define sozinha fatos técnicos: resultados relevantes continuam sendo cruzados com código estático, logs e evidência oficial.
+### Keycode-mode eliminado para a configuração Peugeot ativa
 
-### F3 ainda não comprovou
+A UI HVAC possui command/property mode e um modo alternativo por keycodes. A análise do fluxo de `HvacFragment.customizeView(...)` + `CanBusManager.HvacPropId.isKeyCode(...)` + property list do `HdPsaProtocol` fechou que:
 
-- ação/touch original marcada → TX `0x3B` → ACK → RX `0x31` → efeito físico;
-- qual produtor material originou os sete `RX_NAO_SOLICITADO` HVAC já capturados;
-- arbitration IDs e payloads da CAN veicular abaixo da CANBOX;
-- imagem IAP exata `PAF23A-240409`;
-- semântica comprovada de `0x1A`;
-- causa raiz do crash loop de `sourceDir`.
+- keycodes especiais são IDs `> 61440`;
+- `HdPsaProtocol.initHvacPropertyList()` publica apenas propriedades normais do HVAC (`16385...24577` relevantes);
+- a lista-base começa vazia e a mutação posterior localizada só ajusta temperatura `16400` para unidade;
+- não há injeção de IDs keycode para esta configuração.
 
-## Próximo passo técnico da F3
+**Consequência:** a UI Peugeot ativa permanece em command/property mode e seu caminho previsto termina no builder `0x3B`. A ausência de `0x3B` não pode ser explicada por um keycode-mode oculto dessa tela.
 
-A evidência passiva já esgotou o caminho conhecido. Executar somente após autorização material de interação real uma sessão sincronizada e controlada:
+### Gêmeo digital HVAC — resultado
 
-`ação na UI original/controle conhecido → timestamp → TX observado/ausente → RX 0x31 → HvacInfo/estado → latência → efeito físico`
+O gêmeo digital separa `STATIC`, `OBSERVED`, `SIMULATED` e `INFERRED`.
 
-Priorizar uma ação por vez: power, A/C, fan, temperatura, AUTO, SYNC, recirculação, airflow e defrost.
+Ele reproduz:
 
-Não construir nem transmitir frames manualmente por hipótese e não usar replay.
+- framing/checksum;
+- builder `0x3B`, incluindo supressões e comandos dependentes do estado;
+- parser/encoder `0x31` com round-trip byte a byte dos oito estados reais;
+- state machine empírica;
+- endpoint fake CANBOX: recebe `0x3B` offline e gera `0x31` previsto, usando assinatura empírica quando existe match exato e somente efeito mínimo estático quando não existe.
+
+A sequência diferencial dos oito estados reais é inferida como:
+
+1. `FRONT_DEFROST_ON` — confiança 0,90;
+2. `REAR_DEFROST_ON` — 0,999, único campo alterado;
+3. `FRONT_DEFROST_OFF` — 0,86;
+4. `REAR_DEFROST_OFF` — 0,999, único campo alterado;
+5. `RECIRCULATION_ON` — 0,995, único campo alterado;
+6. `HVAC_POWER_OFF` — 0,98;
+7. `HVAC_POWER_ON` — 0,98, retorno exato ao estado-base.
+
+Estas etiquetas são `INFERRED`, não `CORRELATED`; o fato observado é a transição `0x31`.
+
+### Validação offline
+
+Executado antes da consolidação do gêmeo:
+
+- `python scripts/hiworld_hvac_digital_twin.py --self-test` → PASS;
+- `python -m unittest discover -s tests -v` → **11/11 PASS**;
+- regressão contra `candata_8.log` → 821 frames válidos, 8 estados `0x31`, `0x3B=0`, replay/state vector exato e sequência inferida reproduzida.
+
+Cobertura inclui checksum, vetores `0x3B`, round-trip `0x31`, power redundante, inversão de recirculação, fan absoluto, airflow por bits, passos de temperatura, replay da state machine e fake CANBOX para rear-defrost.
+
+## Gate físico residual da F3 — UMA ação
+
+A antiga matriz manual de múltiplas funções foi substituída por `docs/F3_ONE_SHOT_VALIDATION.md`.
+
+Quando houver autorização material para usar o carro, a única ação humana necessária é:
+
+> com **rear defrost OFF**, tocar **rear defrost ON uma vez** na UI original do Car Info, com `DbgAssist` capturando RX/TX.
+
+Previsão fechada antes do teste:
+
+- property `24577`, área `2`, valor `1`;
+- TX estático esperado: `5A A5 02 3B 06 01 43`;
+- retorno esperado: `0x31 payload[2] bit5` muda `0 → 1`;
+- na transição real já observada de rear-defrost, nenhum outro campo `0x31` mudou.
+
+Se aparecer `TX 0x3B` previsto + ACK + `RX 0x31` correspondente + efeito físico coerente, o elo comum `UI → 0x3B → CANBOX/veículo → 0x31` fica provado. **Não pedir teste função por função depois disso.**
+
+Se o TX previsto não aparecer, preservar essa única captura e voltar à análise offline; não iniciar tentativa e erro no carro.
+
+## Lacunas que permanecem abertas
+
+- o gate físico único acima ainda não foi executado;
+- produtor material dos sete `RX_NAO_SOLICITADO` anteriores ainda não foi identificado, embora o fluxo normal da UI Car Info e keycode-mode tenham sido excluídos para aquela captura/configuração;
+- arbitration IDs/payloads da CAN veicular abaixo da CANBOX não foram observados;
+- imagem IAP exata `PAF23A-240409` não foi fornecida;
+- `0x1A data[9:10]` continua hipótese forte de RPM, não fato promovido;
+- causa raiz do crash `sourceDir` continua pendente.
 
 ## Sistema de aprendizado
 
-- `SKILLS_INDEX.md`, `docs/LEARNING_SYSTEM.md` e skills próprias estão integrados na `main`;
-- `LEARNINGS.md` é resumo versionado; banco Aprendizados do Notion mantém histórico/status;
-- novos aprendizados são registrados na linha de trabalho autorizada e consolidados na `main` quando aplicável;
-- `L-005` foi promovido para `runtime-static-correlation`: frame estático ≠ TX observado;
-- `L-006` foi promovido para `reusable-engineering-learning`: fresh-read antes de reservar ID e verificação de unicidade após criar;
-- `L-007` foi promovido para `can-frame-differential-analysis`: provar camada/transporte antes de interpretar ID;
-- `L-008` foi promovido para `reusable-engineering-learning`: teste anti-retrabalho e documentação em duas camadas;
-- `L-009` foi promovido para `can-frame-differential-analysis`: separar `RESPOSTA_SOLICITADA`, `PERIODICO`, `RX_NAO_SOLICITADO` e `INDETERMINADO` antes de inferir causalidade.
+Skills canônicas: `SKILLS_INDEX.md` + `skills/*/SKILL.md`.
 
-## Invariantes
+Aprendizados recentes:
 
-- projeto novo e isolado;
-- Notion + Guardrails + GitHub Connector no topo;
-- `main` é o padrão e estado consolidado;
-- branch só por risco demonstrável **e** autorização explícita do proprietário;
-- autorização de branch não reduz autonomia técnica dentro do objetivo autorizado;
-- concorrência atual é serializada por espera/fresh-read quando não há branch autorizada;
-- autonomia por bloco sem microautorizações técnicas;
-- evidência original preservada;
-- **camada/transporte devem ser provados antes de interpretar IDs de protocolo**;
-- **proveniência temporal de RX deve ser classificada antes de inferir causa**;
-- **descoberta material deve deixar detalhe versionado + mapa humano anti-retrabalho**;
-- código estático não prova efeito físico;
-- UI/widget futuros compartilham uma única camada de controle;
-- ROM/firmware somente se camadas superiores forem insuficientes;
-- alvo real só é modificado dentro de bloco que inclua explicitamente essa fronteira.
+- L-005 → `runtime-static-correlation`: frame estático ≠ TX observado;
+- L-006 → `reusable-engineering-learning`: fresh-read antes de reservar ID;
+- L-007 → `can-frame-differential-analysis`: provar camada/transporte antes de interpretar ID;
+- L-008 → documentação em duas camadas/teste anti-retrabalho;
+- L-009 → separar resposta solicitada/push antes de inferir causa;
+- **L-010 → `protocol-digital-twin-inference`: antes de pedir bateria de testes físicos, construir gêmeo digital e escolher um experimento de máxima informação.**
+
+A nova skill foi metodologicamente adaptada de práticas públicas de reverse engineering de protocolos/binary analysis e validada contra as evidências do próprio projeto; nenhuma conclusão externa virou fato do PROTOCOLOCANBUS sem verificação local.
+
+## Próximo passo único
+
+**Não executar matriz de tentativa e erro.**
+
+Após autorização explícita para interação física, executar somente `docs/F3_ONE_SHOT_VALIDATION.md`: **rear-defrost ON uma vez**, capturar TX/RX e decidir o elo comum. Sem replay, sem frame manual, sem ROM/firmware.
