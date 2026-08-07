@@ -6,10 +6,10 @@
 **Fundação F0:** PASS — publicada e verificável  
 **Governança F0.1:** PASS — operação remote-first definida  
 **Governança F0.2:** PASS — sistema de aprendizado/skills integrado  
-**Governança F0.4:** regra vigente — `main` única durante descoberta  
+**Governança F0.4:** PASS — `main` única durante descoberta  
 **Fase F1:** PASS — consolidada na `main`  
 **Fase F2:** PASS — cadeia HVAC original mapeada  
-**Fase atual:** F3 — pronta para correlação runtime controlada  
+**Fase atual:** F3 — ATIVA; marco passivo das evidências CANBOX concluído, correlação controlada ainda pendente  
 **Última atualização:** 2026-08-07
 
 ## Missão atual
@@ -28,12 +28,11 @@ Estado local nunca substitui o GitHub remoto.
 
 - toda evidência, documentação, aprendizado, skill, script e estado útil deve ser consolidado na `main`;
 - nenhuma branch nova pode ser criada ou usada sem autorização clara e explícita do proprietário;
-- existência de ref histórica não autoriza trabalho nela;
 - se houver outra escrita/bloco/agente em andamento, o trabalho posterior aguarda ou para;
 - quando a escrita anterior terminar, fazer fresh-read da `main`, reconciliar e continuar nela;
 - paralelismo não é motivo para dispersar conhecimento.
 
-Refs históricas `work/*`/`lab/*` que ainda existam devem permanecer sem commits exclusivos e sem uso técnico até poderem ser removidas.
+Verificação remota atual: apenas a branch `main` existe.
 
 ## F1 — resultado consolidado
 
@@ -62,34 +61,74 @@ Relatório técnico: `docs/F2_HVAC_ORIGINAL_CHAIN.md`
 - `PeugeotHiworldManager` aponta a família inspecionada para `HdPsaProtocol`;
 - runtime identifica `Hiworld-Peugeot-208-2023~Present（Brazil）-All`;
 - `HdPsaProtocol` traduz propriedades HVAC para `5A A5 02 3B <subcomando> <valor> <checksum>`;
-- temperatura/fan absolutos e posição do ar dependem do `HvacInfo` atual;
 - `rxAirInfoCmdId = 0x31`; `HdPsaProtocol` decodifica `0x31` para power, A/C, MAX A/C, AUTO, SYNC, recirculação, desembaçadores, fan, direção e temperaturas;
-- logs existentes contêm RX reais `5A A5 0C 31 ...` com checksum válido;
 - retorno percorre `CanPopWind/ICanBus → HvacModel/ViewModel → HvacFragment.setHvacInfo`.
 
-### Lacunas mantidas após F2
+## F3 — marco passivo das evidências CANBOX/runtime
 
-- TX `0x3B` ainda não observado diretamente nos `candata_5..8`;
-- toque específico → TX → RX → estado ainda não correlacionado por timestamp;
-- efeito físico de cada subcomando permanece para prova dinâmica;
-- causa raiz do crash loop de `sourceDir` continua pendente;
-- assinatura/instalação privilegiada continua fora deste estágio.
+Relatório técnico: `docs/F3_CAN_RUNTIME_EVIDENCE_DEEP_DIVE.md`
 
-## Próximo bloco
+### Hierarquia das fontes confirmada
 
-**F3 — Correlação runtime.**
+- `candata_5 → candata_6 → candata_7 → candata_8` são snapshots progressivos por prefixo exato; `candata_8` é a captura canônica mais completa;
+- `CANBOX_RUNTIME_CAPTURE_2026-08-06_1201 (2).zip` contém os 15 arquivos centrais do ZIP menor byte a byte idênticos e acrescenta 76 diagnósticos;
+- `Engenharia-Reversa-CANBOX.zip` é artefato derivado com diretório central/EOCD ausente, mas 4.122 entradas recuperáveis por cabeçalhos locais.
 
-Objetivo:
+### Camada e transporte confirmados
 
-`ação controlada → timestamp → logcat → TX 0x3B → RX 0x31 → HvacInfo/estado`
+- os `candata_*` **não são CAN bruto do Peugeot**; registram o protocolo serial Hiworld/Jancar no limite Android/Car Info ↔ CANBOX;
+- no RK3326 observado, o caminho sustentado é `Car Info/Jancar → /dev/ttyS5 @ 38400 → CANBOX Hiworld → CAN veicular`;
+- a configuração converge para `Hiworld-Peugeot-208-2023~Present（Brazil）-All`;
+- `0x31`, `0x3B`, `0x6A` e `0xFF` são IDs/comandos do protocolo CANBOX, não arbitration IDs CAN veiculares comprovados.
 
-A F3 deve priorizar observação e correlação. Não construir nem transmitir frames manualmente por hipótese. Qualquer interação com o equipamento real precisa permanecer dentro da fronteira explicitamente autorizada.
+### Protocolo/runtime confirmados
+
+- framing: `5A A5 <len> <cmd> <data...> <checksum>`;
+- `candata_8` contém 821 frames reconstruídos e 821/821 checksums aditivos válidos;
+- `0xFF`/`0xFE` são ACKs;
+- `TX 0x6A` é o mecanismo de consulta: a captura mostra pedidos `0x11, 0x31, 0x94, 0x71, 0x72, 0x76, 0x79, 0xF0` seguidos dos relatórios correspondentes;
+- portanto parte dos `RX 0x31` é estado HVAC **solicitado pelo app**, não prova de toque HVAC;
+- `RX 0x31` mostra transições de power, A/C, recirculação, front/rear defrost, fan e airflow;
+- continua havendo **zero TX `0x3B`** em `candata_5..8`;
+- a origem das transições `0x31` permanece não provada;
+- `0x1A` é o grupo mais variável, mas não é registrado/decodificado pelo `HdPsaProtocol`; nessa implementação o ID de 360/parking é `0xE8`, logo `0x1A` permanece sem semântica promovida.
+
+### Firmware CANBOX
+
+- `RX 0xF0` em runtime reporta `H1H2PAF23A-240409`;
+- o IAP fornecido `H1H2PAF23A-230802` pertence à mesma família PAF23A, porém é mais antigo e não prova a imagem exata instalada;
+- os quatro IAPs fornecidos compartilham 13 bytes iniciais e depois divergem; não há base para afirmar criptografia ou compressão.
+
+### Aprendizado promovido
+
+- `L-007 — Protocolo CANBOX serial não é CAN bruto do veículo`;
+- regra: **primeiro provar a camada/transporte; depois interpretar o ID**.
+
+### F3 ainda não comprovou
+
+- ação/touch original → TX `0x3B` → ACK → RX `0x31` → efeito físico;
+- origem de cada transição HVAC já capturada;
+- arbitration IDs e payloads da CAN veicular abaixo da CANBOX;
+- imagem IAP exata `PAF23A-240409`;
+- semântica de `0x1A`;
+- causa raiz do crash loop de `sourceDir`.
+
+## Próximo passo técnico da F3
+
+Executar somente após autorização material de interação real uma sessão sincronizada e controlada:
+
+`ação na UI original → timestamp → TX 0x3B → ACK → RX 0x31 → HvacInfo/estado → latência → efeito físico`
+
+Priorizar uma ação por vez: power, A/C, fan, temperatura, AUTO, SYNC, recirculação, airflow e defrost.
+
+Não construir nem transmitir frames manualmente por hipótese e não usar replay.
 
 ## Sistema de aprendizado
 
 - `SKILLS_INDEX.md`, `docs/LEARNING_SYSTEM.md` e skills próprias estão integrados na `main`;
 - `LEARNINGS.md` é resumo versionado; banco Aprendizados do Notion mantém histórico/status;
-- durante descoberta, novos aprendizados são registrados diretamente na `main`, nunca isolados em branch de aprendizado.
+- durante descoberta, novos aprendizados são registrados diretamente na `main`;
+- `L-007` está registrado como candidato a refinamento da skill `can-frame-differential-analysis`.
 
 ## Invariantes
 
@@ -100,6 +139,7 @@ A F3 deve priorizar observação e correlação. Não construir nem transmitir f
 - concorrência serializada por espera/fresh-read;
 - autonomia por bloco sem microautorizações técnicas;
 - evidência original preservada;
+- **camada/transporte devem ser provados antes de interpretar IDs de protocolo**;
 - código estático não prova efeito físico;
 - UI/widget futuros compartilham uma única camada de controle;
 - ROM/firmware somente se camadas superiores forem insuficientes;
