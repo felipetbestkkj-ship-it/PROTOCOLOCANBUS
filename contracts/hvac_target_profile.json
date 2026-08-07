@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "target": "Peugeot 208 / configuração Hiworld observada no projeto",
+  "source_priority": "vehicle-target facts override generic protocol capability labels",
+  "owner_confirmed": {
+    "front_defrost": true,
+    "rear_defrost": false
+  },
+  "interpretation_rule": "A função existir em HdPsaProtocol/HvacInfo prova capacidade do protocolo genérico, não presença física no veículo-alvo.",
+  "protocol_capabilities_not_target_features": [
+    {
+      "name": "rear_defrost",
+      "property": {"id": 24577, "area": 2},
+      "tx_subcommand": "0x06",
+      "rx_protocol_bit": "0x31 payload[2] bit5",
+      "target_status": "NOT_PRESENT_ON_TARGET",
+      "note": "Preservar como semântica do parser/builder genérico. Não atribuir a transição observada desse bit a desembaçador traseiro físico no alvo."
+    }
+  ],
+  "f3_one_shot_gate": {
+    "action": "recirculation_on",
+    "precondition": "recirculation OFF",
+    "property": {"id": 16394, "logical_value": 1},
+    "predicted_tx": "5A A5 02 3B 07 00 43",
+    "predicted_rx_change": "0x31 payload[1] bit4: 0 -> 1",
+    "why": "Função real do alvo, comando único, retorno já observado como transição de campo único e operação reversível.",
+    "fallback_policy": "Se divergir, preservar uma captura e voltar offline; não iniciar tentativa e erro com outros botões."
+  }
+}
