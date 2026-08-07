@@ -12,6 +12,15 @@ required = [
     "LEARNINGS.md",
     "REMOTE_OPERATION_POLICY.md",
     "WORKFLOWS.md",
+    "SKILLS_INDEX.md",
+    "docs/LEARNING_SYSTEM.md",
+    "skills/reusable-engineering-learning/SKILL.md",
+    "skills/artifact-forensics/SKILL.md",
+    "skills/android-apk-differential-triage/SKILL.md",
+    "skills/runtime-static-correlation/SKILL.md",
+    "skills/cross-source-state-reconciliation/SKILL.md",
+    "skills/can-frame-differential-analysis/SKILL.md",
+    "skills/evidence-narrowing/SKILL.md",
 ]
 
 missing = [name for name in required if not (ROOT / name).is_file()]
@@ -26,6 +35,9 @@ state = (ROOT / "PROJECT_STATE.md").read_text(encoding="utf-8")
 remote = (ROOT / "REMOTE_OPERATION_POLICY.md").read_text(encoding="utf-8")
 workflows_doc = (ROOT / "WORKFLOWS.md").read_text(encoding="utf-8")
 workflow = (ROOT / ".github/workflows/governance.yml").read_text(encoding="utf-8")
+skills_index = (ROOT / "SKILLS_INDEX.md").read_text(encoding="utf-8")
+learning_system = (ROOT / "docs/LEARNING_SYSTEM.md").read_text(encoding="utf-8")
+learning_skill = (ROOT / "skills/reusable-engineering-learning/SKILL.md").read_text(encoding="utf-8")
 
 checks = {
     "repo oficial no AGENTS": "felipetbestkkj-ship-it/PROTOCOLOCANBUS" in agents,
@@ -48,6 +60,14 @@ checks = {
     "workflow governança autoexplicativo": "✅ VERIFICAR SE O PROJETO ESTÁ ORGANIZADO" in workflow,
     "checagem remota de branches": "Branches remotas ativas" in workflow,
     "próximo bloco no estado": "Próximo bloco" in state,
+    "índice de skills no contrato": "SKILLS_INDEX.md" in agents,
+    "skills não bloqueantes": "Ausência/inaplicabilidade de skill **não bloqueia**" in agents,
+    "seleção autônoma de skill": "selecionar autonomamente apenas as skills relevantes" in agents,
+    "learning distiller no fechamento": "Learning Distiller" in agents,
+    "catálogo contém skill de aprendizado": "reusable-engineering-learning" in skills_index,
+    "catálogo contém narrowing": "evidence-narrowing" in skills_index,
+    "promoção controlada": "Gate de promoção para skill" in learning_system,
+    "sem transcript como aprendizado": "não armazenar transcript de execução" in learning_skill.lower(),
 }
 
 failed = [label for label, ok in checks.items() if not ok]
@@ -57,4 +77,4 @@ if failed:
         print(f"- {label}")
     sys.exit(1)
 
-print("PASS: governança, Guardrails, operação remota, branches e workflows estão amarrados.")
+print("PASS: governança, Guardrails, operação remota, branches, workflows, skills e aprendizado estão amarrados.")
