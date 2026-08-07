@@ -45,3 +45,13 @@ Documentação, evidência, aprendizado, início de fase, outro agente trabalhan
 **Mesmo quando o gate de risco indicar benefício, criar ou usar qualquer branch diferente de `main` continua exigindo autorização clara e explícita do proprietário para aquele objetivo.** Após essa autorização, a autonomia normal do bloco permanece: commits, testes, correções, documentação e demais operações reversíveis dentro da linha autorizada não exigem microautorizações. Merge/release/publicação permanecem fronteiras separadas, salvo se a autorização original as incluir.
 
 Sem autorização, somente `main`. Com autorização normal, o padrão é `main` + uma branch temporária; uma segunda branch simultânea exige justificativa própria e nova autorização. Política detalhada: `docs/BRANCH_POLICY.md`.
+
+## D-013 — Conhecimento técnico em duas camadas: resumo + detalhe anti-retrabalho
+Toda descoberta técnica material deve ser preservada em duas camadas complementares:
+
+1. **Detalhe reproduzível/versionado na linha GitHub autorizada:** relatório, evidência, hashes, scripts e tabelas técnicas necessários para verificar a conclusão.
+2. **Mapa humano no Notion:** resumo no topo e detalhe suficiente para consulta sem redescoberta. Para protocolos/binários, preservar framing, offsets, bits, IDs/subcomandos, exemplos, contagens, confiança, hipóteses descartadas e lacunas.
+
+O `PROJECT_STATE.md` e o Estado Oficial do Notion permanecem resumidos: registram fatos promovidos, fase e próximo passo, sem virar dump técnico.
+
+**Teste anti-retrabalho:** um agente novo deve conseguir identificar o que foi descoberto, onde está o byte/campo, qual fonte sustenta a conclusão, se foi observado ou apenas construído estaticamente e o que ainda falta provar sem repetir a engenharia reversa original.
