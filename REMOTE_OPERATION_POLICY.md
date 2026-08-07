@@ -8,7 +8,7 @@ A sequência operacional obrigatória é:
 
 1. **Notion** — entender missão, fase, bloco ativo/planejado, decisões e aprendizados.
 2. **Codex Engineering Guardrails** — carregar o modo aplicável e definir o método de execução.
-3. **GitHub Connector** — confirmar repositório, `main`, commit/SHA, arquivos, diffs, CI e estado técnico real.
+3. **GitHub Connector** — confirmar repositório, linha de trabalho autorizada, commit/SHA, arquivos, diffs, CI e estado técnico real.
 4. Executar o bloco autorizado.
 5. Confirmar o novo estado no GitHub remoto.
 6. Sincronizar Notion com resultado, evidência e próximo passo.
@@ -41,30 +41,36 @@ Qualquer resultado local que importe ao projeto deve voltar ao fluxo remoto: ser
 
 ## Identidade entre sessões
 
-Durante a fase de descoberta, a fotografia técnica de um bloco é definida por:
+Sem branch explicitamente autorizada, a fotografia técnica de um bloco é definida por:
 
 `repositório + main + commit/SHA + arquivos versionados + evidência registrada`
 
-Dois chats diferentes devem chegar à mesma fotografia ao ler o mesmo Notion e o mesmo SHA da `main`.
+Se existir branch explicitamente autorizada para um objetivo, ela é uma linha temporária de trabalho; a `main` continua sendo o estado consolidado até a integração.
+
+Dois chats diferentes devem chegar à mesma fotografia ao ler o mesmo Notion e o mesmo SHA remoto aplicável.
 
 ## Sincronização obrigatória
 
 Antes de qualquer `PASS`:
 
-- GitHub deve refletir o estado final pretendido na `main`;
+- GitHub deve refletir o estado final pretendido na linha autorizada do bloco;
 - commit/SHA de saída deve ser identificado;
 - Notion deve registrar o resultado do bloco e o próximo passo;
 - divergências entre Notion e GitHub devem ser corrigidas ou explicitamente registradas.
 
-## Branches remotas durante a descoberta
+Uma branch autorizada pode concluir seu objetivo técnico sem ser confundida com estado consolidado; integração/merge continua fronteira material própria quando não incluída na autorização.
 
-A política detalhada fica em `AGENTS.md` e `WORKFLOWS.md`.
+## Política de branches por risco
 
-Regra curta: **`main` é a única linha técnica ativa durante descoberta/investigação.** Nenhuma branch nova pode ser criada ou usada sem autorização clara e explícita do proprietário.
+A política detalhada fica em `docs/BRANCH_POLICY.md`, `AGENTS.md` e `WORKFLOWS.md`.
 
-Se houver concorrência de escrita, o trabalho posterior aguarda ou para, relê a `main` quando ela estiver livre e continua sobre o novo HEAD. Não abrir branch como mecanismo de paralelismo.
+Regra curta: **`main` é o padrão. Branch só deve ser recomendada quando isolamento reduzir um risco técnico concreto melhor do que `main + commits + testes + fresh-read + serialização`.**
 
-Refs históricas eventualmente existentes não autorizam trabalho e devem permanecer sem commits exclusivos até poderem ser removidas.
+Mesmo quando houver benefício, criar ou usar qualquer branch diferente de `main` continua exigindo autorização clara e explícita do proprietário para aquele objetivo.
+
+Após a autorização, a operação reversível dentro da branch — commits, testes, correções e documentação — segue com a mesma autonomia normal do bloco. A autorização da branch não autoriza automaticamente merge/release/publicação.
+
+Na descoberta/investigação atual, o gate continua resultando em `main` única. Se houver concorrência de escrita, o trabalho posterior aguarda ou para, relê a `main` quando ela estiver livre e continua sobre o novo HEAD; não abrir branch automaticamente como mecanismo de paralelismo.
 
 ## Regra de divergência
 
