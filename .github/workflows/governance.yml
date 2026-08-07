@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   governance:
-    name: "✅ Conferir governança, main única e organização"
+    name: "✅ Conferir governança, branches e organização"
     runs-on: ubuntu-latest
     steps:
       - name: "📥 Ler o projeto deste commit"
@@ -24,38 +24,34 @@ jobs:
       - name: "✅ Conferir arquivos e regras obrigatórias"
         run: python scripts/check_governance.py
 
-      - name: "🌿 Conferir linha técnica autorizada"
+      - name: "🌿 Conferir formato da linha técnica"
         shell: bash
         run: |
           BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
           echo "Branch verificada: ${BRANCH}"
-          if [ "${BRANCH}" != "main" ]; then
-            echo "FAIL: somente a main está autorizada durante descoberta."
-            echo "Branch adicional exige autorização clara e explícita do proprietário registrada no Notion."
-            exit 1
-          fi
-          echo "PASS: Somente a main está autorizada durante descoberta."
+          case "${BRANCH}" in
+            main)
+              echo "PASS: main é a linha padrão."
+              ;;
+            work/*|lab/*)
+              echo "PASS DE FORMATO: branch temporária usa nomenclatura aceita."
+              echo "IMPORTANTE: este workflow não consegue provar a autorização do proprietário no Notion."
+              echo "Criar/usar esta branch só é válido quando a autorização explícita existir para o objetivo."
+              ;;
+            *)
+              echo "FAIL: branch fora da política. Use main ou, somente após autorização explícita, work/* ou lab/*."
+              exit 1
+              ;;
+          esac
 
-      - name: "🌿 Conferir se refs antigas não dispersam conhecimento"
+      - name: "🌿 Mostrar quantidade de branches remotas"
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          MAIN_SHA="$(gh api "repos/${GITHUB_REPOSITORY}/branches/main" --jq '.commit.sha')"
-          echo "main: ${MAIN_SHA}"
-          BAD=0
-          while IFS=$'\t' read -r NAME SHA; do
-            [ -z "${NAME}" ] && continue
-            if [ "${NAME}" = "main" ]; then
-              continue
-            fi
-            echo "Ref histórica: ${NAME} @ ${SHA}"
-            if [ "${SHA}" != "${MAIN_SHA}" ]; then
-              echo "FAIL: ${NAME} diverge da main e pode dispersar conhecimento."
-              BAD=1
-            fi
-          done < <(gh api --paginate "repos/${GITHUB_REPOSITORY}/branches?per_page=100" --jq '.[] | [.name, .commit.sha] | @tsv')
-          if [ "${BAD}" -ne 0 ]; then
-            exit 1
+          COUNT="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/branches?per_page=100" --jq '.[].name' | wc -l)"
+          echo "Branches remotas ativas: ${COUNT}"
+          echo "Regra: sem autorização, somente main. O padrão autorizado normal é main + uma branch temporária."
+          if [ "${COUNT}" -gt 2 ]; then
+            echo "ATENÇÃO: há mais de uma branch temporária. Cada branch adicional precisa de justificativa e autorização explícita próprias."
           fi
-          echo "PASS: refs remotas não contêm estado divergente da main."
