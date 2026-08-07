@@ -33,46 +33,66 @@ Formato preferido:
 
 O resumo do workflow deve informar sempre:
 
+- qual linha/branch autorizada gerou o arquivo;
 - qual commit/SHA gerou o arquivo;
 - qual finalidade do APK;
 - se é laboratório, teste ou versão consolidada;
 - o próximo passo humano em linguagem simples.
 
-Durante a fase de descoberta, a origem normal é sempre a `main`.
+Sem branch explicitamente autorizada, a origem é a `main`.
 
 Nunca entregar um arquivo chamado apenas `app-debug.apk` ou `build.apk` como artefato principal para o proprietário.
 
-## 3. Política de branches durante a descoberta
+## 3. Política de branches — efeito prático
+
+A regra completa está em `docs/BRANCH_POLICY.md`.
 
 ### Regra principal
 
-**Durante a fase de descoberta/investigação, existe uma única linha técnica ativa: `main`.**
+**`main` é o padrão. Branch só faz sentido quando isola um risco real.**
 
-Todo conhecimento, evidência, documentação, aprendizado, skill, script auxiliar e estado consolidável deve ir para a `main`.
+Antes de sugerir uma branch, a engenharia deve conseguir responder:
 
-Nenhuma `work/*`, `lab/*`, `develop` ou outra branch pode ser criada ou usada para trabalho sem **autorização clara e explícita do proprietário** para aquele objetivo.
+`qual risco existe → como a branch isola esse risco → por que main + commits + testes + fresh-read não bastam → benefício supera o custo?`
 
-### Concorrência
+Exemplos em que branch pode comprar segurança:
 
-Se outro trabalho ou agente estiver escrevendo no projeto:
+- manter um APK/build funcional intacto enquanto outro é alterado;
+- desenvolver mudança executável que pode quebrar build/empacotamento/assinatura antes da validação;
+- comparar duas implementações reais independentes;
+- permitir paralelismo de código realmente necessário quando serializar causaria bloqueio material;
+- isolar hotfix/release de código executável ainda em desenvolvimento.
 
-1. não criar branch para escapar da concorrência;
-2. aguardar ou parar a escrita atual;
-3. reler o HEAD da `main` quando a outra escrita terminar;
-4. reconciliar o que mudou;
-5. continuar na própria `main`.
+Não são motivo suficiente sozinhos:
 
-**Trabalho paralelo não justifica dispersar conhecimento.**
+- documentação/evidência/aprendizado/skill;
+- outro agente estar trabalhando;
+- mudança pequena;
+- início de fase;
+- hábito de Git Flow;
+- simplesmente começar a gerar APK, se não houver risco de perder uma versão conhecida como boa.
 
-### Branch autorizada no futuro
+### Autorização obrigatória
 
-Se o proprietário autorizar explicitamente uma branch para um objetivo concreto, essa autorização deve ser registrada no Notion antes da criação. A branch deve existir somente pelo tempo necessário ao objetivo autorizado e o conhecimento útil deve voltar à `main` ao final.
+Mesmo quando a engenharia conclui que branch seria útil, **ela não cria nem usa a branch sem autorização clara e explícita do proprietário para aquele objetivo**.
 
-Sem essa autorização explícita, a resposta correta é **não criar branch**.
+O pedido deve ser único e objetivo: explicar risco, benefício, finalidade e duração esperada.
 
-### Refs históricas
+Depois da autorização, não surgem microautorizações novas. Dentro da branch autorizada, a engenharia pode autonomamente commitar, testar, corrigir, documentar e executar os passos reversíveis necessários ao objetivo.
 
-Refs antigas que existam de fases anteriores não são linhas de trabalho. Devem permanecer sem commits exclusivos e ser removidas quando a ferramenta disponível permitir. Sua existência física não autoriza novos trabalhos nelas.
+Merge/release/publicação continuam separados, salvo se a autorização os incluir explicitamente.
+
+### Quantidade
+
+Sem autorização: somente `main`.
+
+Com autorização normal: `main` + uma branch temporária.
+
+Uma segunda branch simultânea precisa de motivo próprio e nova autorização explícita. Não existe `develop` permanente por padrão.
+
+### Situação atual
+
+Na descoberta/investigação atual, o gate de risco continua resultando em **`main` única**. Se outro agente estiver escrevendo, aguardar/serializar, reler o HEAD e continuar; não criar branch automaticamente para paralelizar.
 
 ## 4. Operação remota
 
