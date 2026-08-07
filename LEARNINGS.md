@@ -78,3 +78,12 @@ Aprendizados fechados e pendentes. O banco completo fica no Notion.
 **Prevenção:** classificar RX relevante como `RESPOSTA_SOLICITADA`, `PERIODICO`, `RX_NAO_SOLICITADO` ou `INDETERMINADO` antes de atribuir causa.  
 **Regra:** `RX_NAO_SOLICITADO` prova ausência do request compatível conhecido, mas **não prova automaticamente botão físico ou identidade do produtor**; causalidade ainda exige evidência independente.  
 **Promoção:** promovido/refinado em `skills/can-frame-differential-analysis/SKILL.md`.
+
+## L-010 — Antes de pedir bateria de testes físicos, construir gêmeo digital e escolher um experimento de máxima informação
+
+**Estado:** Fechado  
+**Observação:** a F3 inicialmente convergia para testar várias funções HVAC uma por vez no carro; ao combinar builder/parser estático, trace real e state machine offline, a lacuna física caiu para um único teste discriminatório.  
+**Causa:** encerrar o narrowing no primeiro limite estático→físico desperdiça informação ainda extraível por replay, simulação contra-factual e eliminação de caminhos alternativos de software.  
+**Prevenção:** quando hardware real for caro em tempo/risco, construir primeiro vocabulário + gramática + endpoint fake, testar regressões e ranquear experimentos por poder discriminatório.  
+**Regra:** só pedir múltiplos testes físicos quando um experimento único não puder validar o elo comum; preferir transição de campo único com comando estático único e retorno observável, mantendo `STATIC/OBSERVED/SIMULATED/INFERRED` separados.  
+**Promoção:** promovido em `skills/protocol-digital-twin-inference/SKILL.md`.
