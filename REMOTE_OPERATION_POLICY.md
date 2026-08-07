@@ -8,7 +8,7 @@ A sequência operacional obrigatória é:
 
 1. **Notion** — entender missão, fase, bloco ativo/planejado, decisões e aprendizados.
 2. **Codex Engineering Guardrails** — carregar o modo aplicável e definir o método de execução.
-3. **GitHub Connector** — confirmar repositório, branches remotas, branch afetada, commit/SHA, arquivos, diffs, CI e estado técnico real.
+3. **GitHub Connector** — confirmar repositório, `main`, commit/SHA, arquivos, diffs, CI e estado técnico real.
 4. Executar o bloco autorizado.
 5. Confirmar o novo estado no GitHub remoto.
 6. Sincronizar Notion com resultado, evidência e próximo passo.
@@ -41,26 +41,30 @@ Qualquer resultado local que importe ao projeto deve voltar ao fluxo remoto: ser
 
 ## Identidade entre sessões
 
-A fotografia técnica de um bloco é definida por:
+Durante a fase de descoberta, a fotografia técnica de um bloco é definida por:
 
-`repositório + branch remota + commit/SHA + arquivos versionados + evidência registrada`
+`repositório + main + commit/SHA + arquivos versionados + evidência registrada`
 
-Dois chats diferentes devem chegar à mesma fotografia ao ler o mesmo Notion e o mesmo SHA remoto.
+Dois chats diferentes devem chegar à mesma fotografia ao ler o mesmo Notion e o mesmo SHA da `main`.
 
 ## Sincronização obrigatória
 
 Antes de qualquer `PASS`:
 
-- GitHub deve refletir o estado final pretendido;
-- branch e commit/SHA de saída devem ser identificados;
+- GitHub deve refletir o estado final pretendido na `main`;
+- commit/SHA de saída deve ser identificado;
 - Notion deve registrar o resultado do bloco e o próximo passo;
 - divergências entre Notion e GitHub devem ser corrigidas ou explicitamente registradas.
 
-## Branches remotas
+## Branches remotas durante a descoberta
 
 A política detalhada fica em `AGENTS.md` e `WORKFLOWS.md`.
 
-Regra curta: `main` + uma `work/*` +, quando realmente necessário, uma `lab/*`; máximo normal de 3 branches remotas ativas.
+Regra curta: **`main` é a única linha técnica ativa durante descoberta/investigação.** Nenhuma branch nova pode ser criada ou usada sem autorização clara e explícita do proprietário.
+
+Se houver concorrência de escrita, o trabalho posterior aguarda ou para, relê a `main` quando ela estiver livre e continua sobre o novo HEAD. Não abrir branch como mecanismo de paralelismo.
+
+Refs históricas eventualmente existentes não autorizam trabalho e devem permanecer sem commits exclusivos até poderem ser removidas.
 
 ## Regra de divergência
 
