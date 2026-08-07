@@ -61,7 +61,7 @@ checks = {
     "checagem remota de branches": "Branches remotas ativas" in workflow,
     "próximo bloco no estado": "Próximo bloco" in state,
     "índice de skills no contrato": "SKILLS_INDEX.md" in agents,
-    "skills não bloqueantes": "Ausência/inaplicabilidade de skill **não bloqueia**" in agents,
+    "skills não bloqueantes": "ausência/inaplicabilidade de skill **não bloqueia**" in agents.lower(),
     "seleção autônoma de skill": "selecionar autonomamente apenas as skills relevantes" in agents,
     "learning distiller no fechamento": "Learning Distiller" in agents,
     "catálogo contém skill de aprendizado": "reusable-engineering-learning" in skills_index,
