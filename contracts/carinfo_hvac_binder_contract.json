@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "STATIC_RUNTIME_PLAUSIBLE_NOT_YET_PROBED_FROM_EXTERNAL_APK",
+  "service": {
+    "package": "com.can.activity",
+    "class": "com.can.ui.CanPopWind",
+    "component": "com.can.activity/com.can.ui.CanPopWind",
+    "manifest_permission": null,
+    "intent_actions": [
+      "autoai.intent.action.CANBUS_SERVICE",
+      "yecon.intent.CanService",
+      "com.jancar.canservice"
+    ],
+    "runtime_service_resolver_seen": true,
+    "target_sdk": 27,
+    "shared_user_id": "android.uid.system"
+  },
+  "interfaces": {
+    "ICanUI": {
+      "descriptor": "com.autoai.canbus.ICanUI",
+      "transactions": {"getCanService": 1},
+      "service_name_for_hvac_backend": "CanBusManager"
+    },
+    "ICanBus": {
+      "descriptor": "com.autoai.canbus.ICanBus",
+      "transactions": {
+        "registerListener": 1,
+        "unregisterListener": 2,
+        "setHvacProperty": 7,
+        "getHvacInfo": 13,
+        "getPropertyList": 26
+      }
+    },
+    "ICanBusListener": {
+      "descriptor": "com.autoai.canbus.ICanBusListener",
+      "transactions": {"onHvacInfoChanged": 1}
+    }
+  },
+  "parcelables": {
+    "CarPropertyValue": {
+      "class": "com.autoai.canbus.CarPropertyValue",
+      "fields": ["propertyId", "areaId", "valueClassName", "value"],
+      "evidence": "STATIC_DECOMPILED"
+    },
+    "HvacInfo": {
+      "class": "com.autoai.canbus.HvacInfo",
+      "evidence": "STATIC_DECOMPILED",
+      "note": "Parcelable order is long but decompiled; exact client implementation must preserve order."
+    }
+  },
+  "security_observation": {
+    "service_manifest_permission_absent": true,
+    "onBind_returns_ICanUI_directly": true,
+    "getCanService_returns_ICanBus_for_CanBusManager": true,
+    "calling_uid_or_permission_gate_found_in_inspected_CanBusService": false,
+    "caveat": "External APK binding and full Parcelable compatibility are not proven until a separate-client Binder probe runs on the target."
+  },
+  "preferred_future_probe": {
+    "read_only_first": [
+      "bind service",
+      "ICanUI.getCanService(\"CanBusManager\")",
+      "ICanBus.getHvacInfo()",
+      "ICanBus.getPropertyList(\"hvac\")",
+      "register ICanBusListener and observe onHvacInfoChanged"
+    ],
+    "write_later_only_with_real-target_authorization": "ICanBus.setHvacProperty(CarPropertyValue)"
+  }
+}
