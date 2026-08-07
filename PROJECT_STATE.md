@@ -7,6 +7,7 @@
 **Governança F0.1:** PASS — operação remote-first definida  
 **Governança F0.2:** PASS — sistema de aprendizado/skills integrado  
 **Governança F0.4:** PASS — `main` única durante descoberta  
+**Governança F0.5:** PASS — decisão permanente de branch por risco + autorização explícita  
 **Fase F1:** PASS — consolidada na `main`  
 **Fase F2:** PASS — cadeia HVAC original mapeada  
 **Fase atual:** F3 — ATIVA; marco passivo das evidências CANBOX concluído, correlação controlada ainda pendente  
@@ -22,15 +23,21 @@ Reconstruir de forma dirigida a cadeia Car Info/HVAC a partir das evidências lo
 
 Estado local nunca substitui o GitHub remoto.
 
-## Política de branch vigente — fase de descoberta
+## Política de branch vigente — risco + autorização
 
-**`main` é a única linha técnica ativa e o único destino de conhecimento durante descoberta/investigação.**
+**`main` é o padrão permanente. Branch é ferramenta de isolamento de risco, não etapa obrigatória.**
 
-- toda evidência, documentação, aprendizado, skill, script e estado útil deve ser consolidado na `main`;
-- nenhuma branch nova pode ser criada ou usada sem autorização clara e explícita do proprietário;
-- se houver outra escrita/bloco/agente em andamento, o trabalho posterior aguarda ou para;
-- quando a escrita anterior terminar, fazer fresh-read da `main`, reconciliar e continuar nela;
-- paralelismo não é motivo para dispersar conhecimento.
+A engenharia pode recomendar uma branch quando provar benefício concreto de isolamento, por exemplo preservar executável conhecido como bom, isolar mudança executável potencialmente quebrável, comparar implementações independentes, permitir paralelismo de código realmente não serializável ou separar hotfix/release.
+
+Mesmo nesses casos, **criar ou usar qualquer branch diferente de `main` exige autorização clara e explícita do proprietário para aquele objetivo**.
+
+Depois da autorização, a autonomia normal do bloco permanece: commits, testes, correções e documentação dentro da linha autorizada não exigem microautorizações. Merge/release/publicação continuam fronteiras separadas, salvo se a autorização original as incluir.
+
+Sem autorização, somente `main`. O padrão autorizado normal é `main` + uma branch temporária; uma segunda branch simultânea exige justificativa própria e nova autorização.
+
+Na descoberta/investigação atual, o gate continua resultando em `main` única. Se houver outra escrita/bloco/agente em andamento, o trabalho posterior aguarda ou para, faz fresh-read da `main`, reconcilia e continua nela.
+
+Política detalhada: `docs/BRANCH_POLICY.md`.
 
 Verificação remota atual: apenas a branch `main` existe.
 
@@ -127,16 +134,17 @@ Não construir nem transmitir frames manualmente por hipótese e não usar repla
 
 - `SKILLS_INDEX.md`, `docs/LEARNING_SYSTEM.md` e skills próprias estão integrados na `main`;
 - `LEARNINGS.md` é resumo versionado; banco Aprendizados do Notion mantém histórico/status;
-- durante descoberta, novos aprendizados são registrados diretamente na `main`;
+- novos aprendizados são registrados na linha de trabalho autorizada e consolidados na `main` quando aplicável;
 - `L-007` está registrado como candidato a refinamento da skill `can-frame-differential-analysis`.
 
 ## Invariantes
 
 - projeto novo e isolado;
 - Notion + Guardrails + GitHub Connector no topo;
-- `main` como única linha técnica ativa durante descoberta;
-- branch somente com autorização explícita do proprietário;
-- concorrência serializada por espera/fresh-read;
+- `main` é o padrão e estado consolidado;
+- branch só por risco demonstrável **e** autorização explícita do proprietário;
+- autorização de branch não reduz autonomia técnica dentro do objetivo autorizado;
+- concorrência atual é serializada por espera/fresh-read quando não há branch autorizada;
 - autonomia por bloco sem microautorizações técnicas;
 - evidência original preservada;
 - **camada/transporte devem ser provados antes de interpretar IDs de protocolo**;
