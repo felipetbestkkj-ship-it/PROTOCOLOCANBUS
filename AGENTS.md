@@ -42,11 +42,12 @@ O estado técnico oficial vive no GitHub remoto.
 - usar o GitHub Connector para leitura e escrita remota sempre que tecnicamente disponível;
 - confirmar SHA remoto antes de alterar e SHA remoto depois de alterar;
 - uma cópia local pode ser usada somente como ferramenta auxiliar temporária de análise/build/teste quando necessária;
-- nenhum resultado local é considerado oficial enquanto não estiver refletido na `main` remota e identificado por commit/SHA;
+- nenhum resultado local é considerado oficial enquanto não estiver refletido no GitHub remoto e identificado por commit/SHA;
+- por padrão, a `main` é a linha consolidada; branch explicitamente autorizada é linha temporária de trabalho e não substitui a `main` como estado consolidado antes da integração;
 - não tomar decisão de estado com base em clone local, pasta local ou memória do chat;
 - ao fechar o bloco, GitHub e Notion devem estar sincronizados sobre fase, resultado e próximo passo.
 
-A meta é que dois chats distintos, lendo Notion e o mesmo SHA remoto da `main`, reconstruam a mesma fotografia do projeto.
+A meta é que dois chats distintos, lendo Notion e o mesmo SHA remoto da linha aplicável, reconstruam a mesma fotografia do projeto.
 
 ## 5. Autonomia por bloco
 
@@ -63,7 +64,9 @@ Quando um objetivo está autorizado, o agente executa sem microautorizações as
 - documentação, estado, evidência e aprendizado;
 - seleção/aplicação de skills úteis ao objetivo;
 - refinamento de aprendizado/skill quando coberto pelo sistema de promoção;
-- commit/push diretamente na `main` durante a fase de descoberta, após fresh-read do HEAD remoto.
+- commit/push na linha de trabalho já autorizada para o bloco, após fresh-read do HEAD remoto.
+
+Se a linha autorizada for `main`, seguir nela. Se o proprietário tiver autorizado explicitamente uma branch para aquele objetivo, commits, testes, correções, documentação e demais passos reversíveis dentro dessa branch seguem autônomos; **não pedir microautorizações a cada commit ou teste**.
 
 Teste é responsabilidade da engenharia. Não perguntar ao proprietário se deve testar, qual ferramenta técnica previsível deve usar ou qual skill aplicável deve carregar.
 
@@ -112,39 +115,51 @@ Ordem padrão do primeiro ciclo:
 
 ROM/firmware são último recurso, não ponto de partida.
 
-## 10. Branches — main única durante descoberta
+## 10. Branches — decisão por risco com autorização explícita
 
-### Regra obrigatória atual
+A política detalhada vive em `docs/BRANCH_POLICY.md`.
 
-**Enquanto o projeto estiver em fase de descoberta/investigação, `main` é a única linha técnica ativa e o único destino oficial de conhecimento.**
+### Princípio permanente
 
-Tudo que for comprovado ou útil ao projeto — evidência, documentação, decisões, aprendizados, skills, scripts, correções e estado — deve ser consolidado diretamente na `main`.
+**`main` é o padrão. Branch é ferramenta de isolamento de risco, não etapa obrigatória do processo.**
 
-### Criação ou uso de branch
+A engenharia avalia autonomamente se uma branch traria benefício técnico concreto. Exemplos de risco que podem justificar a recomendação:
 
-Nenhuma `work/*`, `lab/*`, `develop` ou outra branch pode ser criada **ou usada para novo trabalho** sem autorização clara e explícita do proprietário para aquele objetivo.
+- preservar um APK/build executável conhecido como bom enquanto outra implementação potencialmente quebrável é desenvolvida;
+- isolar mudança de código/build/assinatura/empacotamento que pode deixar a linha principal temporariamente inutilizável antes dos testes;
+- comparar implementações independentes que precisam coexistir temporariamente;
+- paralelismo de código realmente necessário que não possa ser serializado de forma razoável;
+- hotfix/release que precise de isolamento de trabalho executável ainda não consolidado.
 
-A existência de uma ref antiga não concede autorização para usá-la.
+Documentação, evidência, aprendizado, skill, início de fase, outro agente trabalhando, mudança pequena ou hábito de Git **não justificam branch por si só**.
 
-### Trabalho paralelo
+### Autorização continua obrigatória
 
-Se outra escrita/bloco/agente estiver atuando no repositório:
+Mesmo quando o gate de risco indicar benefício, a engenharia **não cria nem usa a branch automaticamente**.
 
-1. não abrir branch para trabalhar em paralelo;
-2. aguardar ou parar a escrita posterior;
-3. quando a escrita anterior terminar, consultar novamente a `main` e o HEAD remoto;
-4. reconciliar as mudanças;
-5. continuar na `main`.
+Deve explicar de forma curta o risco, o benefício, a finalidade e a duração esperada e pedir **uma única autorização objetiva do proprietário** para criar/usar a branch naquele objetivo.
 
-**Concorrência é resolvida por serialização e fresh-read, não por dispersão em branches.**
+Depois dessa autorização:
 
-### Exceção futura
+- registrar objetivo/motivo no Notion;
+- criar a branch a partir de HEAD fresco da `main`;
+- operar autonomamente dentro do objetivo autorizado, sem microautorizações para commits, testes, correções e documentação;
+- merge/release/publicação continuam fronteira separada, salvo se a autorização original os incluir explicitamente;
+- consolidar o conhecimento útil e remover a branch quando o motivo de isolamento terminar.
 
-Uma branch só pode nascer após autorização explícita do proprietário. Essa autorização deve registrar objetivo e motivo no Notion. Encerrado o objetivo autorizado, todo conhecimento útil volta à `main` e a branch deve ser removida.
+### Topologia padrão
 
-### Refs históricas
+Sem autorização específica, apenas `main`.
 
-Refs antigas que ainda existam devem permanecer sem commits exclusivos e sem uso técnico. Removê-las quando a ferramenta disponível permitir. Até lá, a `main` continua sendo a única fonte e linha ativa.
+Quando houver branch autorizada, o padrão normal é `main` + **uma única branch temporária**. Uma segunda branch simultânea exige justificativa própria e nova autorização explícita.
+
+Não existe `develop` permanente por padrão.
+
+### Aplicação atual
+
+Na descoberta/investigação atual, o gate continua resultando em **`main` única**, porque evidência, documentação, scripts auxiliares e correlação passiva não compram isolamento suficiente para justificar o custo de branch.
+
+Se outra escrita/bloco/agente estiver atuando agora, concorrência continua sendo resolvida por espera/serialização + fresh-read da `main`, não pela criação automática de branch.
 
 ## 11. Workflows e artefatos em linguagem humana
 
@@ -218,7 +233,7 @@ Todo bloco técnico termina com:
 - modo Guardrails efetivamente carregado;
 - Notion consultado e sincronizado?;
 - objetivo;
-- repo/main/commit de entrada e saída;
+- repo/linha de trabalho/commit de entrada e saída;
 - resultado;
 - comprovado;
 - não comprovado;
@@ -228,4 +243,4 @@ Todo bloco técnico termina com:
 - sistemas externos/alvo real alterados?;
 - próximo passo único.
 
-Um bloco não pode receber `PASS` se não houver registro do modo Guardrails usado, preflight no Notion e fotografia remota de `main`/commit.
+Um bloco não pode receber `PASS` se não houver registro do modo Guardrails usado, preflight no Notion e fotografia remota da linha/commit aplicável.
