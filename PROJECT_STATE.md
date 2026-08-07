@@ -11,7 +11,7 @@
 **Governança D-013:** vigente — conhecimento técnico em duas camadas, com mapa anti-retrabalho  
 **Fase F1:** PASS — consolidada na `main`  
 **Fase F2:** PASS — cadeia HVAC original mapeada  
-**Fase atual:** F3 — ATIVA; marco passivo das evidências CANBOX concluído, correlação controlada ainda pendente  
+**Fase atual:** F3 — ATIVA; investigação passiva do caminho conhecido esgotada, correlação controlada no alvo ainda pendente  
 **Última atualização:** 2026-08-07
 
 ## Missão atual
@@ -87,9 +87,12 @@ Relatório técnico: `docs/F2_HVAC_ORIGINAL_CHAIN.md`
 - `rxAirInfoCmdId = 0x31`; `HdPsaProtocol` decodifica `0x31` para power, A/C, MAX A/C, AUTO, SYNC, recirculação, desembaçadores, fan, direção e temperaturas;
 - retorno percorre `CanPopWind/ICanBus → HvacModel/ViewModel → HvacFragment.setHvacInfo`.
 
-## F3 — marco passivo das evidências CANBOX/runtime
+## F3 — evidências CANBOX/runtime
 
-Relatório técnico: `docs/F3_CAN_RUNTIME_EVIDENCE_DEEP_DIVE.md`
+Relatórios técnicos:
+
+- `docs/F3_CAN_RUNTIME_EVIDENCE_DEEP_DIVE.md`;
+- `docs/F3_PASSIVE_CONTINUATION_TX_COVERAGE.md`.
 
 ### Hierarquia das fontes confirmada
 
@@ -110,32 +113,37 @@ Relatório técnico: `docs/F3_CAN_RUNTIME_EVIDENCE_DEEP_DIVE.md`
 - `candata_8` contém 821 frames reconstruídos e 821/821 checksums aditivos válidos;
 - `0xFF`/`0xFE` são ACKs;
 - `TX 0x6A` é o mecanismo de consulta: a captura mostra pedidos `0x11, 0x31, 0x94, 0x71, 0x72, 0x76, 0x79, 0xF0` seguidos dos relatórios correspondentes;
-- portanto parte dos `RX 0x31` é estado HVAC **solicitado pelo app**, não prova de toque HVAC;
 - `RX 0x31` mostra transições de power, A/C, recirculação, front/rear defrost, fan e airflow;
 - continua havendo **zero TX `0x3B`** em `candata_5..8`;
-- a origem das transições `0x31` permanece não provada;
-- `0x1A` é o grupo mais variável, mas não é registrado/decodificado pelo `HdPsaProtocol`; nessa implementação o ID de 360/parking é `0xE8`, logo `0x1A` permanece sem semântica promovida.
+- `0x1A` não é registrado/decodificado pelo `HdPsaProtocol`; nessa implementação o ID de 360/parking é `0xE8`, logo `0x1A` não é promovido como 360/parking;
+- `RX 0xF0` reporta `H1H2PAF23A-240409`.
 
-### Firmware CANBOX
+### Narrowing passivo adicional confirmado
 
-- `RX 0xF0` em runtime reporta `H1H2PAF23A-240409`;
-- o IAP fornecido `H1H2PAF23A-230802` pertence à mesma família PAF23A, porém é mais antigo e não prova a imagem exata instalada;
-- os quatro IAPs fornecidos compartilham 13 bytes iniciais e depois divergem; não há base para afirmar criptografia ou compressão.
+- o caminho de controle conhecido `setHvacProperty → mCanProxy → CanSender → doTx` entrega ao `DbgAssist` o mesmo pacote enviado para a porta; um frame HVAC `0x3B` de 7 bytes seria capturável no `candata` quando TX está habilitado;
+- todo o vocabulário TX de `candata_8` foi classificado: `0xFF` (251 ACK), `0xCB` (50 data/hora), `0x6A` (8 consultas), `0xA1` (7 mídia/source/volume) e `0xA4` (3 mídia/CD-CDC); **não há outro ID TX** e `0x3B=0`;
+- `0xA1` é produzido por `getMediaData(...)`; o payload observado `80 07 0F` contém marcador `0x80`, código source/media `0x07` e volume 15;
+- `0xA4` é produzido por `getMediaSource(...)`; os três payloads observados são 11 bytes zerados e pertencem à superfície de mídia, não HVAC;
+- 16 linhas RX `0x31` colapsam em 8 eventos lógicos adjacentes; somente o primeiro segue uma consulta `0x6A → 0x31` (+~64 ms); **os sete eventos lógicos seguintes são `RX_NAO_SOLICITADO` pelo mecanismo 0x6A**;
+- esses sete pushes formam uma sequência coerente de front/rear defrost, recirculação, power, A/C e fan, mas não possuem `TX 0x3B` correspondente;
+- consequentemente, **as sete mudanças não foram produzidas pelo caminho HVAC conhecido do Car Info durante a captura**;
+- a origem ainda permanece aberta entre controles/estado originados no veículo e algum produtor/caminho alternativo que bypassasse o fluxo conhecido;
+- após transição `0x11` de ACC/KeyIn para ativo, o campo `0x1A data[9:10]` sobe de 0 para 1356, atinge 1474 e decai para ~800–900; comportamento é fortemente compatível com RPM de partida/marcha lenta, porém permanece **hipótese forte**, pois falta parser PSA ativo ou referência independente timestampada.
 
 ### F3 ainda não comprovou
 
-- ação/touch original → TX `0x3B` → ACK → RX `0x31` → efeito físico;
-- origem de cada transição HVAC já capturada;
+- ação/touch original marcada → TX `0x3B` → ACK → RX `0x31` → efeito físico;
+- qual produtor material originou os sete `RX_NAO_SOLICITADO` HVAC já capturados;
 - arbitration IDs e payloads da CAN veicular abaixo da CANBOX;
 - imagem IAP exata `PAF23A-240409`;
-- semântica de `0x1A`;
+- semântica comprovada de `0x1A`;
 - causa raiz do crash loop de `sourceDir`.
 
 ## Próximo passo técnico da F3
 
-Executar somente após autorização material de interação real uma sessão sincronizada e controlada:
+A evidência passiva já esgotou o caminho conhecido. Executar somente após autorização material de interação real uma sessão sincronizada e controlada:
 
-`ação na UI original → timestamp → TX 0x3B → ACK → RX 0x31 → HvacInfo/estado → latência → efeito físico`
+`ação na UI original/controle conhecido → timestamp → TX observado/ausente → RX 0x31 → HvacInfo/estado → latência → efeito físico`
 
 Priorizar uma ação por vez: power, A/C, fan, temperatura, AUTO, SYNC, recirculação, airflow e defrost.
 
@@ -149,7 +157,8 @@ Não construir nem transmitir frames manualmente por hipótese e não usar repla
 - `L-005` foi promovido para `runtime-static-correlation`: frame estático ≠ TX observado;
 - `L-006` foi promovido para `reusable-engineering-learning`: fresh-read antes de reservar ID e verificação de unicidade após criar;
 - `L-007` foi promovido para `can-frame-differential-analysis`: provar camada/transporte antes de interpretar ID;
-- `L-008` foi promovido para `reusable-engineering-learning`: teste anti-retrabalho e documentação em duas camadas.
+- `L-008` foi promovido para `reusable-engineering-learning`: teste anti-retrabalho e documentação em duas camadas;
+- `L-009` foi promovido para `can-frame-differential-analysis`: separar `RESPOSTA_SOLICITADA`, `PERIODICO`, `RX_NAO_SOLICITADO` e `INDETERMINADO` antes de inferir causalidade.
 
 ## Invariantes
 
@@ -162,6 +171,7 @@ Não construir nem transmitir frames manualmente por hipótese e não usar repla
 - autonomia por bloco sem microautorizações técnicas;
 - evidência original preservada;
 - **camada/transporte devem ser provados antes de interpretar IDs de protocolo**;
+- **proveniência temporal de RX deve ser classificada antes de inferir causa**;
 - **descoberta material deve deixar detalhe versionado + mapa humano anti-retrabalho**;
 - código estático não prova efeito físico;
 - UI/widget futuros compartilham uma única camada de controle;
