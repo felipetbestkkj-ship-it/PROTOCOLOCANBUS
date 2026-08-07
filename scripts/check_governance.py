@@ -39,31 +39,30 @@ skills_index = (ROOT / "SKILLS_INDEX.md").read_text(encoding="utf-8")
 learning_system = (ROOT / "docs/LEARNING_SYSTEM.md").read_text(encoding="utf-8")
 learning_skill = (ROOT / "skills/reusable-engineering-learning/SKILL.md").read_text(encoding="utf-8")
 learnings = (ROOT / "LEARNINGS.md").read_text(encoding="utf-8")
+decisions = (ROOT / "DECISIONS.md").read_text(encoding="utf-8")
 
 checks = {
     "repo oficial no AGENTS": "felipetbestkkj-ship-it/PROTOCOLOCANBUS" in agents,
     "autonomia por bloco": "Autonomia por bloco" in agents,
     "Guardrails obrigatório": "Codex Engineering Guardrails" in agents,
     "preflight obrigatório": "Preflight obrigatório" in agents,
-    "bloqueio sem tríade": "GitHub Connector não puderem ser usados" in agents,
-    "registro de modo Guardrails": "modo Guardrails efetivamente carregado" in agents,
     "Notion primeiro no preflight": "ler no Notion a Central Oficial, o Estado Oficial e o bloco ativo/planejado" in agents,
     "GitHub Connector explícito": "GitHub Connector" in agents,
     "remote-first explícito": "Operação remote-first" in agents,
-    "limite de três branches": "Máximo de **3 branches remotas ativas" in agents,
-    "branch work padronizada": "work/f<fase>-<objetivo-curto>" in agents,
-    "branch lab padronizada": "lab/f<fase>-<pergunta-curta>" in agents,
-    "sem develop por padrão": "Não existe `develop` por padrão" in agents,
-    "três branches é teto": "teto de segurança, não meta de ocupação" in workflows_doc,
-    "lab exige isolamento real": "isolamento real for necessário" in workflows_doc,
-    "aprendizado de branch desnecessária": "Branch permitida não significa branch necessária" in learnings,
+    "main única no AGENTS": "main` é a única linha técnica ativa" in agents,
+    "branch exige autorização": "sem autorização clara e explícita do proprietário" in agents,
+    "paralelismo serializado": "Concorrência é resolvida por serialização e fresh-read" in agents,
+    "main única no WORKFLOWS": "existe uma única linha técnica ativa: `main`" in workflows_doc,
+    "trabalho paralelo não cria branch": "Trabalho paralelo não justifica dispersar conhecimento" in workflows_doc,
+    "main única no estado": "`main` é a única linha técnica ativa" in state,
+    "decisão D-011": "D-011 — Main única durante a fase de descoberta" in decisions,
+    "aprendizado L-003 atualizado": "Paralelismo não justifica branch durante descoberta" in learnings,
     "política remota presente": "estado remoto como fonte oficial" in remote,
-    "ordem Notion Guardrails GitHub": "Notion" in remote and "Codex Engineering Guardrails" in remote and "GitHub Connector" in remote,
+    "remote policy main única": "`main` é a única linha técnica ativa durante descoberta/investigação" in remote,
     "workflow humano documentado": "📱 GERAR APK PARA INSTALAR" in workflows_doc,
     "apk autoexplicativo": "INSTALAR-ESTE-APK_" in workflows_doc,
     "workflow governança autoexplicativo": "✅ VERIFICAR SE O PROJETO ESTÁ ORGANIZADO" in workflow,
-    "checagem remota de branches": "Branches remotas ativas" in workflow,
-    "próximo bloco no estado": "Próximo bloco" in state,
+    "workflow exige main": "Somente a main está autorizada durante descoberta" in workflow,
     "índice de skills no contrato": "SKILLS_INDEX.md" in agents,
     "skills não bloqueantes": "ausência/inaplicabilidade de skill **não bloqueia**" in agents.lower(),
     "seleção autônoma de skill": "selecionar autonomamente apenas as skills relevantes" in agents,
@@ -81,4 +80,4 @@ if failed:
         print(f"- {label}")
     sys.exit(1)
 
-print("PASS: governança, Guardrails, operação remota, branches, workflows, skills e aprendizado estão amarrados.")
+print("PASS: governança, main única, Guardrails, operação remota, workflows, skills e aprendizado estão amarrados.")
