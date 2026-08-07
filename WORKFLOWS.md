@@ -16,7 +16,7 @@ Evitar nomes isolados como:
 
 Preferir nomes como:
 
-- `✅ VERIFICAR SE O PROJETO ESTÁ ORGANIZADO` — confere governança, branches e regras básicas;
+- `✅ VERIFICAR SE O PROJETO ESTÁ ORGANIZADO` — confere governança e regras básicas;
 - `📱 GERAR APK PARA INSTALAR` — quando existir build Android, gera um APK pronto para o proprietário baixar e instalar;
 - `🧪 TESTAR APK SEM MEXER NO CARRO` — quando houver laboratório/simulador, executa validações sem atuar no equipamento real;
 - `🚀 PREPARAR VERSÃO FINAL` — somente quando existir uma etapa real de consolidação/release.
@@ -33,70 +33,46 @@ Formato preferido:
 
 O resumo do workflow deve informar sempre:
 
-- qual branch gerou o arquivo;
 - qual commit/SHA gerou o arquivo;
 - qual finalidade do APK;
 - se é laboratório, teste ou versão consolidada;
 - o próximo passo humano em linguagem simples.
 
+Durante a fase de descoberta, a origem normal é sempre a `main`.
+
 Nunca entregar um arquivo chamado apenas `app-debug.apk` ou `build.apk` como artefato principal para o proprietário.
 
-## 3. Política anti-proliferação de branches
+## 3. Política de branches durante a descoberta
 
-O projeto é curto e deve permanecer simples.
+### Regra principal
 
-### Princípio principal
+**Durante a fase de descoberta/investigação, existe uma única linha técnica ativa: `main`.**
 
-**O menor número de branches é o padrão. O limite de 3 é teto de segurança, não meta de ocupação.**
+Todo conhecimento, evidência, documentação, aprendizado, skill, script auxiliar e estado consolidável deve ir para a `main`.
 
-Antes de criar uma branch nova, deve existir uma justificativa técnica concreta que possa ser registrada em uma frase. A mera existência de outro agente/bloco em andamento **não** justifica uma nova branch por si só.
+Nenhuma `work/*`, `lab/*`, `develop` ou outra branch pode ser criada ou usada para trabalho sem **autorização clara e explícita do proprietário** para aquele objetivo.
 
-Preferir, nesta ordem:
+### Concorrência
 
-1. reutilizar a `work/*` atual quando o objetivo técnico for o mesmo;
-2. aguardar a consolidação quando a melhoria puder esperar sem risco;
-3. criar `lab/*` somente quando isolamento real for necessário para experimento, comparação ou risco técnico específico.
+Se outro trabalho ou agente estiver escrevendo no projeto:
 
-Se não houver uma razão técnica clara para isolamento, não criar branch.
+1. não criar branch para escapar da concorrência;
+2. aguardar ou parar a escrita atual;
+3. reler o HEAD da `main` quando a outra escrita terminar;
+4. reconciliar o que mudou;
+5. continuar na própria `main`.
 
-### Limite normal
+**Trabalho paralelo não justifica dispersar conhecimento.**
 
-Máximo de **3 branches remotas ativas ao mesmo tempo**:
+### Branch autorizada no futuro
 
-1. `main` — estado oficial consolidado;
-2. uma única `work/*` — trabalho técnico atual;
-3. uma única `lab/*` — investigação temporária, somente quando realmente necessária.
+Se o proprietário autorizar explicitamente uma branch para um objetivo concreto, essa autorização deve ser registrada no Notion antes da criação. A branch deve existir somente pelo tempo necessário ao objetivo autorizado e o conhecimento útil deve voltar à `main` ao final.
 
-Não existe branch `develop` por padrão.
+Sem essa autorização explícita, a resposta correta é **não criar branch**.
 
-### Nomenclatura
+### Refs históricas
 
-Branch de trabalho:
-
-`work/f<fase>-<objetivo-curto>`
-
-Exemplo:
-
-`work/f1-hvac-mapeamento`
-
-Branch de laboratório:
-
-`lab/f<fase>-<pergunta-curta>`
-
-Exemplo:
-
-`lab/f1-comparar-apks`
-
-### Regras
-
-- não criar branch por correção pequena;
-- não criar `v2`, `v3`, `final`, `final2`;
-- um bloco/fase reutiliza a mesma `work/*` enquanto o objetivo permanecer o mesmo;
-- `lab/*` só existe quando a investigação precisa de isolamento real;
-- “há outro agente trabalhando” não é justificativa suficiente para `lab/*`;
-- antes de criar nova branch, consultar as branches remotas existentes;
-- branch concluída/abandonada deve ser removida depois de confirmar que não contém trabalho único necessário;
-- se já existirem 3 branches remotas, uma nova só pode nascer depois de consolidar ou remover uma das temporárias.
+Refs antigas que existam de fases anteriores não são linhas de trabalho. Devem permanecer sem commits exclusivos e ser removidas quando a ferramenta disponível permitir. Sua existência física não autoriza novos trabalhos nelas.
 
 ## 4. Operação remota
 
