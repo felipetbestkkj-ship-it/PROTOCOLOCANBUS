@@ -5,12 +5,13 @@
 **Visibilidade:** pública por decisão explícita do proprietário  
 **Fundação F0:** PASS — publicada e verificável  
 **Governança F0.1:** PASS — operação remote-first, branches e workflows definidos  
-**Fase atual:** F1 — pronta para iniciar  
+**Fase F1:** PASS na branch `work/f1-hvac-mapeamento`  
+**Fase atual:** F2 — pronta para iniciar após fechamento/sincronização operacional da F1  
 **Última atualização:** 2026-08-06
 
 ## Missão atual
 
-Investigar de forma dirigida a cadeia Car Info/HVAC a partir das evidências locais, mantendo o projeto autossuficiente e sem herança técnica de repositórios anteriores.
+Reconstruir de forma dirigida a cadeia Car Info/HVAC a partir das evidências locais, mantendo o projeto autossuficiente e sem herança técnica de repositórios anteriores.
 
 ## Fundação concluída
 
@@ -51,6 +52,46 @@ Nomes:
 
 Não existe `develop` por padrão e não se cria branch por correção pequena.
 
+## F1 — resultado consolidado
+
+Relatório técnico:
+
+`docs/F1_CARINFO_HVAC_TRIAGEM.md`
+
+### Comprovado na F1
+
+- `Car Info / com.can.activity` permanece o alvo central do HVAC.
+- `INSTALAR-v3854-CarInfo-HVAC-Visual-V1.apk` é byte a byte o APK registrado como instalado na baseline, por SHA-256 `d0741a541fc575d3b25bc853a171532b815e8c396451dcc9ebe0f678d1905a50`.
+- A baseline registra `versionCode=3854`, shared user `android.uid.system/1000` e contexto privilegiado/persistente.
+- No manifesto decodificado, original → v3854 altera `versionCode` 3853 → 3854; package, shared UID e componentes inspecionados permanecem iguais.
+- As classes centrais inspecionadas `HvacActivity`, `HvacFragment` e `HvacModel` apresentam código decompilado idêntico entre original e v3854.
+- A mudança significativa observada na superfície HVAC da v3854 está concentrada em layouts, cores e novos drawables.
+- A cadeia estática alcança `HvacFragment → HvacViewModel/HvacModel → CanBusManager → CanPopWind → ICanUI/ICanBus`.
+- Runtime confirma componentes Car Info/Jancar, enquadramento `5A A5` e identificador Hiworld `H1H2PAF23A-240409`.
+- A captura runtime posterior contém crash/restart loop de `com.can.activity` tentando carregar um caminho antigo de `base.apk` inexistente.
+
+### Lacunas mantidas explicitamente
+
+- significado HVAC específico de mensagens como `0x31` ainda não está provado;
+- ação física de cada botão ainda não está mapeada até frame/retorno;
+- mecanismo que habilita/abre `HvacActivity` para esta configuração ainda precisa ser provado;
+- causa raiz do crash loop após mudança de caminho do APK não está provada;
+- estratégia futura de assinatura/instalação privilegiada não foi decidida nem provada.
+
+## Próximo bloco
+
+**F2 — Cadeia HVAC original.**
+
+Objetivo: mapear cada função relevante como:
+
+`ação de UI → propriedade/método → controlador/serviço → mensagem → retorno → estado`
+
+Começar pelas propriedades já usadas pelo `HvacFragment` e seguir somente as dependências necessárias até o backend, sem transmissão CAN por hipótese e sem modificar o equipamento real.
+
+### Gate de saída de F2
+
+Entregar matriz por função com evidência e lacunas explícitas para temperatura, fan, power/A/C/AUTO/modos e demais controles encontrados, sem declarar efeito físico apenas por nome de classe, recurso ou propriedade.
+
 ## Workflows em linguagem simples
 
 O GitHub Actions deve mostrar resultados compreensíveis ao proprietário.
@@ -67,18 +108,6 @@ Nomes reservados quando essas capacidades realmente existirem:
 
 Quando houver APK instalável, o artefato principal deve ser autoexplicativo, preferencialmente `INSTALAR-ESTE-APK_<versao-ou-fase>_<sha-curto>.apk`.
 
-## Próximo bloco
-
-**F1 — Triagem orientada e mapa do Car Info/HVAC.**
-
-Objetivo: identificar original/candidato, versões, manifesto, componentes HVAC, privilégios e dependências observadas, cruzando análise estática com baseline e runtime.
-
-A branch técnica deverá ser criada no preflight de F1 apenas quando o bloco realmente iniciar. Nome preferido: `work/f1-hvac-mapeamento`.
-
-### Gate de saída de F1
-
-Entregar um mapa verificável de componentes e dependências relevantes, com perguntas prioritárias e lacunas explícitas, sem desmontagem indiscriminada e sem atuação no alvo real.
-
 ## Invariantes
 
 - projeto novo e isolado;
@@ -93,16 +122,6 @@ Entregar um mapa verificável de componentes e dependências relevantes, com per
 - UI/widget futuros compartilham uma única camada de controle;
 - ROM/firmware somente se camadas superiores forem insuficientes;
 - alvo real só é modificado dentro de bloco que inclua explicitamente essa fronteira.
-
-## Estado técnico conhecido
-
-As fontes anexadas sustentam como ponto de partida:
-
-- Car Info / `com.can.activity` como alvo central do HVAC;
-- presença de material runtime e baseline da multimídia;
-- tráfego observado enquadrado por `5A A5`;
-- logs com componentes Jancar/CarInfo e identificador Hiworld `H1H2PAF23A-240409`;
-- controle HVAC completo ainda não tratado como provado.
 
 ## Não fazer sem evidência ou fronteira autorizada
 
