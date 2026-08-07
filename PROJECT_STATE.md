@@ -5,8 +5,9 @@
 **Visibilidade:** pública por decisão explícita do proprietário  
 **Fundação F0:** PASS — publicada e verificável  
 **Governança F0.1:** PASS — operação remote-first, branches e workflows definidos  
-**Fase F1:** PASS na branch `work/f1-hvac-mapeamento`  
-**Fase atual:** F2 — pronta para iniciar após fechamento/sincronização operacional da F1  
+**Fase F1:** PASS — consolidada na `main`  
+**Fase F2:** PASS — cadeia HVAC original mapeada  
+**Fase atual:** F3 — pronta para correlação runtime controlada  
 **Última atualização:** 2026-08-06
 
 ## Missão atual
@@ -70,27 +71,47 @@ Relatório técnico:
 - Runtime confirma componentes Car Info/Jancar, enquadramento `5A A5` e identificador Hiworld `H1H2PAF23A-240409`.
 - A captura runtime posterior contém crash/restart loop de `com.can.activity` tentando carregar um caminho antigo de `base.apk` inexistente.
 
-### Lacunas mantidas explicitamente
+## F2 — cadeia HVAC original
 
-- significado HVAC específico de mensagens como `0x31` ainda não está provado;
-- ação física de cada botão ainda não está mapeada até frame/retorno;
-- mecanismo que habilita/abre `HvacActivity` para esta configuração ainda precisa ser provado;
-- causa raiz do crash loop após mudança de caminho do APK não está provada;
-- estratégia futura de assinatura/instalação privilegiada não foi decidida nem provada.
+Relatório técnico:
+
+`docs/F2_HVAC_ORIGINAL_CHAIN.md`
+
+### Comprovado na F2
+
+- a UI envia `CarPropertyValue`, não bytes CAN diretamente;
+- a cadeia de controle chega a `CanBusService.setHvacProperty → mObjProtocol.buildHvacPackets → CanProxy/CanSender → CanRxTx.sendData`;
+- `PeugeotHiworldManager` aponta a família inspecionada para `HdPsaProtocol`;
+- o runtime identifica a configuração `Hiworld-Peugeot-208-2023~Present（Brazil）-All`;
+- `HdPsaProtocol` traduz as propriedades HVAC relevantes para frames `5A A5 02 3B <subcomando> <valor> <checksum>`;
+- temperatura/fan absolutos e posição do ar são convertidos de forma dependente do `HvacInfo` atual;
+- `rxAirInfoCmdId` é `0x31`; `HdPsaProtocol` registra payload de 12 bytes e decodifica `0x31` para power, A/C, MAX A/C, AUTO, SYNC, recirculação, desembaçadores, fan, direção e temperaturas;
+- os logs existentes contêm frames RX reais `5A A5 0C 31 ...` com checksum válido e mudanças de estado compatíveis com o parser;
+- o retorno de `HvacInfo` percorre `CanPopWind/ICanBus → HvacModel/ViewModel → HvacFragment.setHvacInfo`.
+
+### Lacunas mantidas após F2
+
+- TX `0x3B` ainda não foi observado diretamente nos `candata_5..8`;
+- toque específico → TX → RX → estado ainda não foi correlacionado por timestamp;
+- efeito físico de cada subcomando permanece para prova dinâmica;
+- a instanciação nominal de `HdPsaProtocol` não aparece nos logs atuais, embora manager + configuração + RX sejam coerentes;
+- a string `com.autoai.canbus.base.mvvm.air.HvacFragment` do manager não foi localizada neste APK e não é tratada como entrypoint visual provado;
+- causa raiz do crash loop de `sourceDir` continua pendente;
+- assinatura/instalação privilegiada continua fora deste estágio.
 
 ## Próximo bloco
 
-**F2 — Cadeia HVAC original.**
+**F3 — Correlação runtime.**
 
-Objetivo: mapear cada função relevante como:
+Objetivo:
 
-`ação de UI → propriedade/método → controlador/serviço → mensagem → retorno → estado`
+`ação controlada → timestamp → logcat → TX 0x3B → RX 0x31 → HvacInfo/estado`
 
-Começar pelas propriedades já usadas pelo `HvacFragment` e seguir somente as dependências necessárias até o backend, sem transmissão CAN por hipótese e sem modificar o equipamento real.
+A F3 deve priorizar observação e correlação. Não construir nem transmitir frames manualmente por hipótese. Qualquer interação com o equipamento real precisa permanecer dentro da fronteira explicitamente autorizada.
 
-### Gate de saída de F2
+### Gate de saída de F3
 
-Entregar matriz por função com evidência e lacunas explícitas para temperatura, fan, power/A/C/AUTO/modos e demais controles encontrados, sem declarar efeito físico apenas por nome de classe, recurso ou propriedade.
+Promover ou descartar, por evidência dinâmica, as relações entre ações HVAC, TX, RX e estado; registrar latência e casos em que não haja resposta observável.
 
 ## Workflows em linguagem simples
 
