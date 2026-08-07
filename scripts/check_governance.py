@@ -14,6 +14,7 @@ required = [
     "WORKFLOWS.md",
     "SKILLS_INDEX.md",
     "docs/LEARNING_SYSTEM.md",
+    "docs/BRANCH_POLICY.md",
     "skills/reusable-engineering-learning/SKILL.md",
     "skills/artifact-forensics/SKILL.md",
     "skills/android-apk-differential-triage/SKILL.md",
@@ -37,6 +38,7 @@ workflows_doc = (ROOT / "WORKFLOWS.md").read_text(encoding="utf-8")
 workflow = (ROOT / ".github/workflows/governance.yml").read_text(encoding="utf-8")
 skills_index = (ROOT / "SKILLS_INDEX.md").read_text(encoding="utf-8")
 learning_system = (ROOT / "docs/LEARNING_SYSTEM.md").read_text(encoding="utf-8")
+branch_policy = (ROOT / "docs/BRANCH_POLICY.md").read_text(encoding="utf-8")
 learning_skill = (ROOT / "skills/reusable-engineering-learning/SKILL.md").read_text(encoding="utf-8")
 learnings = (ROOT / "LEARNINGS.md").read_text(encoding="utf-8")
 decisions = (ROOT / "DECISIONS.md").read_text(encoding="utf-8")
@@ -49,20 +51,29 @@ checks = {
     "Notion primeiro no preflight": "ler no Notion a Central Oficial, o Estado Oficial e o bloco ativo/planejado" in agents,
     "GitHub Connector explícito": "GitHub Connector" in agents,
     "remote-first explícito": "Operação remote-first" in agents,
-    "main única no AGENTS": "main` é a única linha técnica ativa" in agents,
-    "branch exige autorização": "sem autorização clara e explícita do proprietário" in agents,
-    "paralelismo serializado": "Concorrência é resolvida por serialização e fresh-read" in agents,
-    "main única no WORKFLOWS": "existe uma única linha técnica ativa: `main`" in workflows_doc,
-    "trabalho paralelo não cria branch": "Trabalho paralelo não justifica dispersar conhecimento" in workflows_doc,
-    "main única no estado": "`main` é a única linha técnica ativa" in state,
-    "decisão D-011": "D-011 — Main única durante a fase de descoberta" in decisions,
+    "branch por risco no AGENTS": "Branches — decisão por risco com autorização explícita" in agents,
+    "main como padrão": "`main` é o padrão. Branch é ferramenta de isolamento de risco" in agents,
+    "branch continua exigindo autorização": "não cria nem usa a branch automaticamente" in agents,
+    "autonomia preservada após autorização": "não pedir microautorizações a cada commit ou teste" in agents,
+    "branch policy canônica": "Branch é uma ferramenta de isolamento de risco" in branch_policy,
+    "gate de benefício": "## Gate de benefício" in branch_policy,
+    "autorização obrigatória no branch policy": "Criar ou usar qualquer branch diferente de `main` exige autorização clara e explícita do proprietário" in branch_policy,
+    "main + uma temporária como padrão autorizado": "uma branch temporária autorizada" in branch_policy,
+    "anti-vies de branch": "## Regra anti-viés" in branch_policy,
+    "workflows explica risco": "Branch só faz sentido quando isola um risco real" in workflows_doc,
+    "workflows preserva autorização": "não cria nem usa a branch sem autorização clara e explícita do proprietário" in workflows_doc,
+    "workflows preserva autonomia": "não surgem microautorizações novas" in workflows_doc,
+    "main única no estado atual": "`main` é a única linha técnica ativa" in state,
+    "decisão D-011 atual": "D-011 — Main única durante a fase de descoberta" in decisions,
+    "decisão D-012 permanente": "D-012 — Branch somente por benefício de isolamento + autorização explícita" in decisions,
     "aprendizado L-003 atualizado": "Paralelismo não justifica branch durante descoberta" in learnings,
     "política remota presente": "estado remoto como fonte oficial" in remote,
-    "remote policy main única": "`main` é a única linha técnica ativa durante descoberta/investigação" in remote,
+    "remote policy main única atual": "`main` é a única linha técnica ativa durante descoberta/investigação" in remote,
     "workflow humano documentado": "📱 GERAR APK PARA INSTALAR" in workflows_doc,
     "apk autoexplicativo": "INSTALAR-ESTE-APK_" in workflows_doc,
     "workflow governança autoexplicativo": "✅ VERIFICAR SE O PROJETO ESTÁ ORGANIZADO" in workflow,
-    "workflow exige main": "Somente a main está autorizada durante descoberta" in workflow,
+    "workflow aceita branch temporária nomeada": "work/*|lab/*" in workflow,
+    "workflow não finge validar Notion": "este workflow não consegue provar a autorização do proprietário no Notion" in workflow,
     "índice de skills no contrato": "SKILLS_INDEX.md" in agents,
     "skills não bloqueantes": "ausência/inaplicabilidade de skill **não bloqueia**" in agents.lower(),
     "seleção autônoma de skill": "selecionar autonomamente apenas as skills relevantes" in agents,
@@ -80,4 +91,4 @@ if failed:
         print(f"- {label}")
     sys.exit(1)
 
-print("PASS: governança, main única, Guardrails, operação remota, workflows, skills e aprendizado estão amarrados.")
+print("PASS: governança, branch por risco com autorização, autonomia, Guardrails, operação remota, workflows, skills e aprendizado estão amarrados.")
