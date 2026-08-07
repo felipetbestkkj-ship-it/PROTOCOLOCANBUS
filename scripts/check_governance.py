@@ -67,7 +67,7 @@ checks = {
     "catálogo contém skill de aprendizado": "reusable-engineering-learning" in skills_index,
     "catálogo contém narrowing": "evidence-narrowing" in skills_index,
     "promoção controlada": "Gate de promoção para skill" in learning_system,
-    "sem transcript como aprendizado": "não armazenar transcript de execução" in learning_skill.lower(),
+    "sem transcript como aprendizado": "não copiar o histórico completo do chat" in learning_skill.lower(),
 }
 
 failed = [label for label, ok in checks.items() if not ok]
