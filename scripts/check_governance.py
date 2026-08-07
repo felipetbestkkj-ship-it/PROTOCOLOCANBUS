@@ -38,6 +38,7 @@ workflow = (ROOT / ".github/workflows/governance.yml").read_text(encoding="utf-8
 skills_index = (ROOT / "SKILLS_INDEX.md").read_text(encoding="utf-8")
 learning_system = (ROOT / "docs/LEARNING_SYSTEM.md").read_text(encoding="utf-8")
 learning_skill = (ROOT / "skills/reusable-engineering-learning/SKILL.md").read_text(encoding="utf-8")
+learnings = (ROOT / "LEARNINGS.md").read_text(encoding="utf-8")
 
 checks = {
     "repo oficial no AGENTS": "felipetbestkkj-ship-it/PROTOCOLOCANBUS" in agents,
@@ -53,6 +54,9 @@ checks = {
     "branch work padronizada": "work/f<fase>-<objetivo-curto>" in agents,
     "branch lab padronizada": "lab/f<fase>-<pergunta-curta>" in agents,
     "sem develop por padrão": "Não existe `develop` por padrão" in agents,
+    "três branches é teto": "teto de segurança, não meta de ocupação" in workflows_doc,
+    "lab exige isolamento real": "isolamento real for necessário" in workflows_doc,
+    "aprendizado de branch desnecessária": "Branch permitida não significa branch necessária" in learnings,
     "política remota presente": "estado remoto como fonte oficial" in remote,
     "ordem Notion Guardrails GitHub": "Notion" in remote and "Codex Engineering Guardrails" in remote and "GitHub Connector" in remote,
     "workflow humano documentado": "📱 GERAR APK PARA INSTALAR" in workflows_doc,
