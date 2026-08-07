@@ -60,3 +60,12 @@ Aprendizados fechados e pendentes. O banco completo fica no Notion.
 **Prevenção:** em toda captura, identificar primeiro framing, direção, transporte e camada; só depois atribuir semântica ao ID.  
 **Regra:** para este equipamento, `candata = protocolo Hiworld serial em /dev/ttyS5 @ 38400`; `0x31`, `0x3B`, `0x6A` e `0xFF` são IDs/comandos da CANBOX, não CAN IDs veiculares comprovados.  
 **Promoção:** candidato a refinamento de `skills/can-frame-differential-analysis/SKILL.md`.
+
+## L-008 — Resumo sem mapa técnico ainda gera retrabalho
+
+**Estado:** Fechado  
+**Observação:** o deep dive F3 estava preservado na `main`, mas o Notion não expunha offsets, bits, comandos, subcomandos, contagens, eventos e lacunas com o mesmo nível de navegabilidade. Um agente novo ainda poderia precisar reabrir fontes para reconstruir algo já provado.  
+**Causa:** existia uma boa separação entre estado operacional e relatório técnico, mas faltava uma ponte humana detalhada entre os dois.  
+**Prevenção:** manter documentação material em duas camadas: resumo rápido + mapa técnico consolidado. Para protocolos/binários, registrar framing, offsets/bits, IDs/subcomandos, exemplos, contagens, confiança, hipóteses descartadas e lacunas.  
+**Regra:** teste anti-retrabalho = um agente novo consegue responder o que é o byte/comando, em qual camada atua, se foi observado ou apenas construído estaticamente, qual fonte prova e o que falta provar sem repetir a engenharia reversa original.  
+**Promoção:** candidato a refinamento de `skills/reusable-engineering-learning/SKILL.md`.
