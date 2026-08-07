@@ -69,3 +69,12 @@ Aprendizados fechados e pendentes. O banco completo fica no Notion.
 **Prevenção:** manter documentação material em duas camadas: resumo rápido + mapa técnico consolidado. Para protocolos/binários, registrar framing, offsets/bits, IDs/subcomandos, exemplos, contagens, confiança, hipóteses descartadas e lacunas.  
 **Regra:** teste anti-retrabalho = um agente novo consegue responder o que é o byte/comando, em qual camada atua, se foi observado ou apenas construído estaticamente, qual fonte prova e o que falta provar sem repetir a engenharia reversa original.  
 **Promoção:** promovido/refinado em `skills/reusable-engineering-learning/SKILL.md`.
+
+## L-009 — Separar resposta a polling de push não solicitado antes de inferir causa
+
+**Estado:** Fechado  
+**Observação:** os RX `0x31` pareciam um conjunto homogêneo de estados HVAC, mas a timeline mostrou que somente o primeiro evento lógico era resposta a uma solicitação `0x6A → 0x31`; os sete seguintes chegaram sem nova solicitação `0x6A` para HVAC.  
+**Causa:** agrupar mensagens apenas por CMD apaga a proveniência temporal: resposta a polling e push/evento podem usar o mesmo ID e estrutura.  
+**Prevenção:** classificar RX relevante como `RESPOSTA_SOLICITADA`, `PERIODICO`, `RX_NAO_SOLICITADO` ou `INDETERMINADO` antes de atribuir causa.  
+**Regra:** `RX_NAO_SOLICITADO` prova ausência do request compatível conhecido, mas **não prova automaticamente botão físico ou identidade do produtor**; causalidade ainda exige evidência independente.  
+**Promoção:** promovido/refinado em `skills/can-frame-differential-analysis/SKILL.md`.
